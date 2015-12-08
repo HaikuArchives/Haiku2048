@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <iostream>
 
 #include <Message.h>
 #include <Messenger.h>
@@ -20,6 +21,7 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	fInGame(false)
 {
 	fBoard = new uint32[fSizeX * fSizeY];
+	Run();
 }
 
 Game::~Game()
@@ -32,8 +34,9 @@ Game::MessageReceived(BMessage *message)
 {
 	switch (message->what)
 	{
+		GameMove move;
 		case H2048_MAKE_MOVE:
-			// TODO: Fill me in
+			move = (GameMove)message->FindInt32("direction");
 			break;
 		default:
 			break;

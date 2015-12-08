@@ -12,10 +12,14 @@
 #include <iostream>
 #include <iomanip>
 
+int32 control(void *data);
+
 TerminalBoard::TerminalBoard(Game *target)
 	:
 	GameBoard(target)
 {
+	fControlID = spawn_thread(&control, "TerminalBoard control keeper",
+		B_NORMAL_PRIORITY, (void *)target);
 }
 
 TerminalBoard::~TerminalBoard()
@@ -26,6 +30,7 @@ void
 TerminalBoard::gameStarted()
 {
 	showBoard();
+	resume_thread(fControlID);
 }
 
 void
@@ -50,6 +55,22 @@ digits(uint32 num)
 		num /= 10;
 	}
 	return result;
+}
+
+int32
+control(void *data)
+{
+	Game *target = (Game *)data;
+	BMessenger messenger(NULL, target);
+	while (true)
+	{
+		int32 c = std::cin.get();
+		if (c != 'w' && c != 'a' && c != 's' && c != 'd')
+			continue;
+		BMessage move(H2048_MAKE_MOVE);
+		move.AddInt32("direction", c);
+		messenger.SendMessage(&move);
+	}
 }
 
 void

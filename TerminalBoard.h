@@ -21,6 +21,9 @@ protected:
 
 private:
 			void		showBoard();
+
+private:
+	thread_id	fControlID;
 };
 
 #endif // TERMINAL_BOARD_H

@@ -17,10 +17,10 @@ class BMessenger;
 
 enum GameMove
 {
-	Left,
-	Right,
-	Up,
-	Down
+	Left = 'a',
+	Right = 'd',
+	Up = 'w',
+	Down = 's'
 };
 
 enum
