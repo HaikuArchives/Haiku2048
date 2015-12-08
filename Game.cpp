@@ -157,6 +157,8 @@ Game::makeMove(GameMove direction)
 			break;
 	}
 
+	bool somethingChanged = false;
+
 	for (int32 itP = 0; itP != toP; itP++)
 	{
 		int32 stopAt = fromS - moveS;
@@ -166,6 +168,8 @@ Game::makeMove(GameMove direction)
 			P = itP;
 			S = itS;
 			uint32 *source = boardAt(*x, *y);
+			if (*source == 0)
+				continue;
 			bool merged = false;
 			while (true)
 			{
@@ -192,6 +196,7 @@ Game::makeMove(GameMove direction)
 			}
 			if (itS != backS)
 			{
+				somethingChanged = true;
 				S = backS;
 				uint32 *dest = boardAt(*x, *y);
 				*dest = *source;
@@ -200,6 +205,13 @@ Game::makeMove(GameMove direction)
 				*source = 0;
 			}
 		}
+	}
+
+	if (!somethingChanged)
+	{
+		// Consider notifying the sender of the move message that the move was
+		// a nop.
+		return;
 	}
 
 	bool found = false;

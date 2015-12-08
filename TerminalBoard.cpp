@@ -82,7 +82,7 @@ TerminalBoard::showBoard()
 	{
 		for (uint32 y = 0; y < fTarget->SizeY(); y++)
 		{
-			uint32 digl = digits(fTarget->BoardAt(x, y));
+			uint32 digl = digits(1 << fTarget->BoardAt(x, y));
 			width = width > digl ? width : digl;
 		}
 	}
