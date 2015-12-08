@@ -37,6 +37,7 @@ Game::MessageReceived(BMessage *message)
 		GameMove move;
 		case H2048_MAKE_MOVE:
 			move = (GameMove)message->FindInt32("direction");
+			makeMove(move);
 			break;
 		default:
 			break;
@@ -110,6 +111,111 @@ uint32
 Game::SizeY() const
 {
 	return fSizeY;
+}
+
+void
+Game::makeMove(GameMove direction)
+{
+	int32 toP, P;
+	int32 fromS, toS, S;
+	int32 moveS;
+	int32 *x, *y;
+
+	switch (direction)
+	{
+		case Left:
+			toP = fSizeY;
+			fromS = 0;
+			moveS = 1;
+			toS = fSizeX;
+			x = &S;
+			y = &P;
+			break;
+		case Right:
+			toP = fSizeY;
+			fromS = fSizeX - 1;
+			moveS = -1;
+			toS = -1;
+			x = &S;
+			y = &P;
+			break;
+		case Up:
+			toP = fSizeX;
+			fromS = 0;
+			moveS = 1;
+			toS = fSizeY;
+			x = &P;
+			y = &S;
+			break;
+		case Down:
+			toP = fSizeX;
+			fromS = fSizeY - 1;
+			moveS = -1;
+			toS = -1;
+			x = &P;
+			y = &S;
+			break;
+	}
+
+	for (int32 itP = 0; itP != toP; itP++)
+	{
+		int32 stopAt = fromS - moveS;
+		for (int32 itS = fromS; itS != toS; itS += moveS)
+		{
+			int32 backS = itS;
+			P = itP;
+			S = itS;
+			uint32 *source = boardAt(*x, *y);
+			bool merged = false;
+			while (true)
+			{
+				if (backS == fromS || backS - 1 == stopAt)
+					break;
+
+				S = backS - moveS;
+				uint32 *other = boardAt(*x, *y);
+				if (*other == 0)
+				{
+					backS -= moveS;
+					continue;
+				}
+				else if (*other == *source)
+				{
+					merged = true;
+					backS -= moveS;
+					break;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (itS != backS)
+			{
+				S = backS;
+				uint32 *dest = boardAt(*x, *y);
+				*dest = *source;
+				if (merged)
+					(*dest)++;
+				*source = 0;
+			}
+		}
+	}
+
+	bool found = false;
+	uint32 placeX, placeY;
+	while (!found)
+	{
+		placeX = std::rand() % fSizeX;
+		placeY = std::rand() % fSizeY;
+
+		found = BoardAt(placeX, placeY) == 0;
+	}
+
+	*boardAt(placeX, placeY) = std::rand() % 2 + 1;
+
+	BMessage moved(H2048_MOVE_MADE);
+	broadcastMessage(moved);
 }
 
 void

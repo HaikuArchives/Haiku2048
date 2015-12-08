@@ -47,6 +47,7 @@ public:
 			uint32		SizeY() const;
 
 private:
+			void		makeMove(GameMove direction);
 			void		broadcastMessage(BMessage &msg);
 			uint32 *	boardAt(uint32 x, uint32 y);
 
