@@ -80,11 +80,12 @@ TerminalBoard::showBoard()
 		for (uint32 x = 0; x < fTarget->SizeX(); x++)
 		{
 			uint32 tileValue = fTarget->BoardAt(x, y);
-
-			std::cout
-				<< std::setw(width)
-				<< (tileValue != 0 ? (1 << tileValue) : 0)
-				<< "|";
+			std::cout << setw(width);
+			if (tileValue != 0)
+				std::cout << (1 << tileValue);
+			else
+				std::cout << " ";
+			std::cout << "|";
 		}
 		std::cout << '\n';
 	}

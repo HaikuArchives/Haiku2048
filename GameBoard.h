@@ -34,6 +34,8 @@ protected:
 
 protected:
 	Game *			fTarget;
+
+private:
 	BMessenger		fToSelf;
 };
 
