@@ -7,9 +7,17 @@
 #define GAME_BOARD_H
 
 #include <Looper.h>
+#include <Messenger.h>
 
 class BMessage;
 class Game;
+
+enum
+{
+	H2048_GAME_STARTED		= '48GS',
+	H2048_GAME_ENDED		= '48GE',
+	H2048_MOVE_MADE			= '48MD'
+};
 
 class GameBoard : public BLooper
 {
@@ -20,13 +28,13 @@ public:
 
 protected:
 	// TODO: Pass the correct parameters and make a BMessage for them.
-	virtual	void		GameStarted() = 0;
-	virtual	void		GameEnded() = 0;
-	virtual	void		MoveMade() = 0;
+	virtual	void		gameStarted() = 0;
+	virtual	void		gameEnded() = 0;
+	virtual	void		moveMade() = 0;
 
-private:
-	Game *		fTarget;
-
+protected:
+	Game *			fTarget;
+	BMessenger		fToSelf;
 };
 
-#endif GAME_BOARD_H
+#endif // GAME_BOARD_H
