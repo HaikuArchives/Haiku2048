@@ -119,7 +119,7 @@ Game::makeMove(GameMove direction)
 	int32 toP; // The size orthogonal to sliding
 	int32 P; // The current position orthogonoal to sliding
 	int32 fromS; // The index the tiles slide to
-	int32 toS // The farthest away index
+	int32 toS; // The farthest away index
 	int32 S; // The current position parallel to sliding
 	int32 moveS; // Reverse sliding direction
 	int32 *x; // Pointer to the direction that corresponds to the X axis
