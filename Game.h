@@ -52,6 +52,7 @@ private:
 			void		broadcastMessage(BMessage &msg);
 			uint32 *	boardAt(uint32 x, uint32 y);
 			uint32		newTile();
+			bool		gameOver();
 
 private:
 	std::vector<BMessenger *>		fTargets;

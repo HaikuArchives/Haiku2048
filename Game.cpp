@@ -177,7 +177,10 @@ Game::makeMove(GameMove direction)
 	// For each row of tiles that has to slide
 	for (int32 itP = 0; itP != toP; itP++)
 	{
-		// For each tile that mey slide, in ascending length of possible slide
+		// Tiles we are not allowed to merge with
+		uint32 cutoff = fromS - moveS;
+
+		// For each tile that may slide, in ascending length of possible slide
 		for (int32 itS = fromS + moveS; itS != toS; itS += moveS)
 		{
 			// The tile which is sliding
@@ -198,9 +201,9 @@ Game::makeMove(GameMove direction)
 				S = backS;
 			}
 
-			// Can we merge with the time we hit?
+			// Can we merge with the tile we hit?
 			uint32 *dest = boardAt(*x, *y);
-			bool merged = *dest == *source;
+			bool merged = backS != cutoff && *dest == *source;
 
 			if (!merged && *dest != 0)
 			{
@@ -223,6 +226,7 @@ Game::makeMove(GameMove direction)
 			// If we merged, increase the exponent
 			if (merged)
 			{
+				cutoff = backS;
 				(*dest)++;
 				scoreChange += 1 << *dest;
 			}
@@ -253,6 +257,13 @@ Game::makeMove(GameMove direction)
 	// Notify boards what happened
 	BMessage moved(H2048_MOVE_MADE);
 	broadcastMessage(moved);
+
+	if (gameOver())
+	{
+		BMessage ended(H2048_GAME_ENDED);
+		ended.AddInt32("finalScore", fScore);
+		broadcastMessage(ended);
+	}
 }
 
 void
@@ -275,4 +286,44 @@ uint32
 Game::newTile()
 {
 	return (std::rand() % 5 == 0) ? 2 : 1;
+}
+
+bool
+Game::gameOver()
+{
+	for (uint32 x = 0; x < fSizeX; x++)
+	{
+		for (uint32 y = 0; y < fSizeY; y++)
+		{
+			uint32 current = BoardAt(x, y);
+			// Current position is unoccupied
+
+			if (current == 0)
+				return false;
+
+			// Only do a checkerboard pattern
+			if ((x + y) % 2 == 1)
+				continue;
+
+			for (int32 offX = -1; offX <= 1; offX ++)
+			{
+				for (int32 offY = -1; offY <= 1; offY++)
+				{
+					// Diagonals, center and out-of-bounds
+					if ((offX != 0 && offY != 0)
+						|| (offX == 0 && offY == 0)
+						|| x + offX < 0
+						|| x + offX >= fSizeX
+						|| y + offY < 0
+						|| y + offY >= fSizeY)
+						continue;
+
+					// Possible merge
+					if (BoardAt(x + offX, y + offY) == current)
+						return false;
+				}
+			}
+		}
+	}
+	return true;
 }

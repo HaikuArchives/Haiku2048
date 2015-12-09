@@ -36,6 +36,7 @@ TerminalBoard::gameStarted()
 void
 TerminalBoard::gameEnded()
 {
+	suspend_thread(fControlID);
 	std::cout << "Game has ended." << std::endl;
 }
 
