@@ -6,7 +6,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <Application.h>
-#include "MainWindow.h"
+#include "GameWindow.h"
 #include "Game.h"
 #include "TerminalBoard.h"
 

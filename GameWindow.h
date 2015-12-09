@@ -2,15 +2,15 @@
  * Copyright (c) 2015 Markus Himmel
  * This file is distributed under the terms of the MIT license
  */
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef GAMEWINDOW_H
+#define GAMEWINDOW_H
 
 #include <Window.h>
 
-class MainWindow : public BWindow
+class GameWindow : public BWindow
 {
 public:
-			MainWindow();
+			GameWindow();
 };
 
-#endif // MAINWINDOW_H
+#endif // GAMEWINDOW_H
