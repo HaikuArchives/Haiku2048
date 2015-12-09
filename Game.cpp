@@ -116,10 +116,14 @@ Game::SizeY() const
 void
 Game::makeMove(GameMove direction)
 {
-	int32 toP, P;
-	int32 fromS, toS, S;
-	int32 moveS;
-	int32 *x, *y;
+	int32 toP; // The size orthogonal to sliding
+	int32 P; // The current position orthogonoal to sliding
+	int32 fromS; // The index the tiles slide to
+	int32 toS // The farthest away index
+	int32 S; // The current position parallel to sliding
+	int32 moveS; // Reverse sliding direction
+	int32 *x; // Pointer to the direction that corresponds to the X axis
+	int32 *y; // Pointer to the direction that corresponds to the Y axis
 
 	switch (direction)
 	{
@@ -159,51 +163,58 @@ Game::makeMove(GameMove direction)
 
 	bool somethingChanged = false;
 
+	// The following code is completely agnostic of the direction the tiles are
+	// acutally sliding
+
+	// For each row of tiles that has to slide
 	for (int32 itP = 0; itP != toP; itP++)
 	{
-		int32 stopAt = fromS - moveS;
-		for (int32 itS = fromS; itS != toS; itS += moveS)
+		// For each tile that mey slide, in ascending length of possible slide
+		for (int32 itS = fromS + moveS; itS != toS; itS += moveS)
 		{
-			int32 backS = itS;
+			// The tile which is sliding
 			P = itP;
 			S = itS;
 			uint32 *source = boardAt(*x, *y);
+
+			// Not a tile, nothing to slide
 			if (*source == 0)
 				continue;
-			bool merged = false;
-			while (true)
-			{
-				if (backS == fromS || backS - 1 == stopAt)
-					break;
 
-				S = backS - moveS;
-				uint32 *other = boardAt(*x, *y);
-				if (*other == 0)
-				{
-					backS -= moveS;
-					continue;
-				}
-				else if (*other == *source)
-				{
-					merged = true;
-					backS -= moveS;
-					break;
-				}
-				else
-				{
-					break;
-				}
-			}
-			if (itS != backS)
+			// Slide until hitting the wall or another tile
+			int32 backS = itS - moveS;
+			S = backS;
+			while (backS != fromS && BoardAt(*x, *y) == 0)
 			{
-				somethingChanged = true;
+				backS -= moveS;
 				S = backS;
-				uint32 *dest = boardAt(*x, *y);
-				*dest = *source;
-				if (merged)
-					(*dest)++;
-				*source = 0;
 			}
+
+			// Can we merge with the time we hit?
+			uint32 *dest = boardAt(*x, *y);
+			bool merged = *dest == *source;
+
+			if (!merged && *dest != 0)
+			{
+				// Hit a different tile, back off
+				backS += moveS;
+			}
+
+			// Didn't move at all
+			if (backS == itS)
+				continue;
+
+			somethingChanged = true;
+
+			// Replace the space we are occupying with the source tile
+			S = backS;
+			dest = boardAt(*x, *y);
+			*dest = *source; // Does nothing when merging
+			*source = 0;
+
+			// If we merged, increase the exponent
+			if (merged)
+				(*dest)++;
 		}
 	}
 
@@ -214,6 +225,7 @@ Game::makeMove(GameMove direction)
 		return;
 	}
 
+	// Emplace new tile
 	bool found = false;
 	uint32 placeX, placeY;
 	while (!found)
@@ -223,9 +235,9 @@ Game::makeMove(GameMove direction)
 
 		found = BoardAt(placeX, placeY) == 0;
 	}
-
 	*boardAt(placeX, placeY) = std::rand() % 2 + 1;
 
+	// Notify boards what happened
 	BMessage moved(H2048_MOVE_MADE);
 	broadcastMessage(moved);
 }

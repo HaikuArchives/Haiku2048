@@ -67,6 +67,7 @@ control(void *data)
 		int32 c = std::cin.get();
 		if (c != 'w' && c != 'a' && c != 's' && c != 'd')
 			continue;
+		std::cout << std::endl;
 		BMessage move(H2048_MAKE_MOVE);
 		move.AddInt32("direction", c);
 		messenger.SendMessage(&move);
