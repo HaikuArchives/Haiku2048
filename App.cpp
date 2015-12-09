@@ -22,7 +22,7 @@ App::App()
 {
 	Game *theGame = new Game(4, 4);
 	TerminalBoard *board = new TerminalBoard(theGame);
-//	WindowBoard *win = new WindowBoard(theGame);
+	WindowBoard *win = new WindowBoard(theGame);
 	theGame->NewGame();
 }
 
