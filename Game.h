@@ -43,6 +43,7 @@ public:
 
 			void		NewGame();
 
+			uint32		Score() const;
 			uint32		SizeX() const;
 			uint32		SizeY() const;
 
@@ -50,6 +51,7 @@ private:
 			void		makeMove(GameMove direction);
 			void		broadcastMessage(BMessage &msg);
 			uint32 *	boardAt(uint32 x, uint32 y);
+			uint32		newTile();
 
 private:
 	std::vector<BMessenger *>		fTargets;
@@ -57,6 +59,7 @@ private:
 	uint32 *						fBoard;
 	uint32							fSizeX, fSizeY;
 	bool							fInGame;
+	uint32							fScore;
 };
 
 #endif // GAME_H

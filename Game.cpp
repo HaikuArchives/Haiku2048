@@ -18,7 +18,8 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	fSizeX(sizeX),
 	fSizeY(sizeY),
 	fTargets(),
-	fInGame(false)
+	fInGame(false),
+	fScore(0)
 {
 	fBoard = new uint32[fSizeX * fSizeY];
 	Run();
@@ -90,7 +91,7 @@ Game::NewGame()
 			continue;
 
 		// Either 2^1 or 2^2
-		*pos = std::rand() % 2 + 1;
+		*pos = newTile();
 		placed++;
 	}
 
@@ -99,6 +100,12 @@ Game::NewGame()
 	broadcastMessage(startNotification);
 
 	fInGame = true;
+}
+
+uint32
+Game::Score() const
+{
+	return fScore;
 }
 
 uint32
@@ -162,6 +169,7 @@ Game::makeMove(GameMove direction)
 	}
 
 	bool somethingChanged = false;
+	uint32 scoreChange = 0;
 
 	// The following code is completely agnostic of the direction the tiles are
 	// acutally sliding
@@ -214,7 +222,10 @@ Game::makeMove(GameMove direction)
 
 			// If we merged, increase the exponent
 			if (merged)
+			{
 				(*dest)++;
+				scoreChange += 1 << *dest;
+			}
 		}
 	}
 
@@ -235,7 +246,9 @@ Game::makeMove(GameMove direction)
 
 		found = BoardAt(placeX, placeY) == 0;
 	}
-	*boardAt(placeX, placeY) = std::rand() % 2 + 1;
+	*boardAt(placeX, placeY) = newTile();
+
+	fScore += scoreChange;
 
 	// Notify boards what happened
 	BMessage moved(H2048_MOVE_MADE);
@@ -256,4 +269,10 @@ uint32 *
 Game::boardAt(uint32 x, uint32 y)
 {
 	return fBoard + (x * fSizeY + y);
+}
+
+uint32
+Game::newTile()
+{
+	return (std::rand() % 5 == 0) ? 2 : 1;
 }

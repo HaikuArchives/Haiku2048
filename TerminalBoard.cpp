@@ -111,5 +111,5 @@ TerminalBoard::showBoard()
 		}
 		std::cout << '\n';
 	}
-	std::cout << dashes << std::endl;
+	std::cout << dashes << "\nScore: " << fTarget->Score() << std::endl;
 }
