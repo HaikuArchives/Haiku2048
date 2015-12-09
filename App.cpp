@@ -6,7 +6,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <Application.h>
-#include "GameWindow.h"
+#include "WindowBoard.h"
 #include "Game.h"
 #include "TerminalBoard.h"
 
@@ -22,6 +22,7 @@ App::App()
 {
 	Game *theGame = new Game(4, 4);
 	TerminalBoard *board = new TerminalBoard(theGame);
+	WindowBoard *win = new WindowBoard(theGame);
 	theGame->NewGame();
 }
 
