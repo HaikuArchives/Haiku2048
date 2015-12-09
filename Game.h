@@ -9,7 +9,6 @@
 #include <vector>
 
 #include <Looper.h>
-#include <ObjectList.h>
 #include <SupportDefs.h>
 
 class BMessage;
