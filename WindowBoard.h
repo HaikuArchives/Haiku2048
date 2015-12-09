@@ -12,7 +12,7 @@
 class Game;
 class WindowBoard;
 class BStringView;
-class BBox;
+class BGridLayout;
 
 /*
  * This is split up into two classes in order to prevent multiple inheritance
@@ -32,7 +32,7 @@ private:
 private:
 	WindowBoard *		fMaster;
 	BStringView *		fScore;
-	BBox *				fBoard;
+	BGridLayout *		fBoard;
 };
 
 
