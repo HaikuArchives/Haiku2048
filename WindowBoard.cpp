@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "NumberView.cpp"
 
+#include <Messenger.h>
 #include <Box.h>
 #include <StringView.h>
 #include <Button.h>
@@ -37,17 +38,22 @@ GameWindow::GameWindow(WindowBoard *master)
 			.End()
 		.Add(fBoard);
 
-	for (uint32 i = 0; i < 4; i++)
+	uint32 sizeX = fMaster->fTarget->SizeX();
+	uint32 sizeY = fMaster->fTarget->SizeY();
+
+	fViews = new NumberView *[sizeX * sizeY];
+
+	for (uint32 x = 0; x < sizeX; x++)
 	{
-		for (uint32 j = 0; j < 4; j++)
+		for (uint32 y = 0; y < sizeY; y++)
 		{
-			NumberView *num = new NumberView(1024, 0, 0);
-			fBoard->AddView(num, i, j);
+			NumberView *num = new NumberView(0, 0, 0);
+			fViews[x * sizeY + y] = num;
+			fBoard->AddView(num, x, y);
 		}
 	}
 
 	ResizeToPreferred();
-
 }
 
 GameWindow::~GameWindow()
@@ -65,6 +71,9 @@ GameWindow::MessageReceived(BMessage *message)
 			game.SendMessage(message);
 			break;
 		}
+		case H2048_WINDOW_SHOW:
+			showBoard();
+			break;
 		default:
 			BWindow::MessageReceived(message);
 			break;
@@ -74,6 +83,18 @@ GameWindow::MessageReceived(BMessage *message)
 void
 GameWindow::showBoard()
 {
+	Game *target = fMaster->fTarget;
+	uint32 sizeX = target->SizeX();
+	uint32 sizeY = target->SizeY();
+
+	for (uint32 x = 0; x < sizeX; x++)
+	{
+		for (uint32 y = 0; y < sizeY; y++)
+		{
+			fViews[x * sizeY + y]->SetNumber(1 << target->BoardAt(x, y));
+			fViews[x * sizeY + y]->Invalidate();
+		}
+	}
 }
 
 WindowBoard::WindowBoard(Game *target)
@@ -91,8 +112,8 @@ WindowBoard::~WindowBoard()
 void
 WindowBoard::gameStarted()
 {
-
-	(new BAlert("Title", "Game Started", "OK"))->Go();
+	BMessenger messenger(NULL, &fWindow);
+	messenger.SendMessage(H2048_WINDOW_SHOW);
 }
 
 void
@@ -104,5 +125,6 @@ WindowBoard::gameEnded()
 void
 WindowBoard::moveMade()
 {
-	(new BAlert("Title", "Move Made", "OK"))->Go();
+	BMessenger messenger(NULL, &fWindow);
+	messenger.SendMessage(H2048_WINDOW_SHOW);
 }

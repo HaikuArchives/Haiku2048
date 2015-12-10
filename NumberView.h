@@ -19,6 +19,8 @@ public:
 			BSize		MinSize();
 			BSize		MaxSize();
 
+			void		SetNumber(uint32 number);
+
 			void		Draw(BRect r);
 
 private:

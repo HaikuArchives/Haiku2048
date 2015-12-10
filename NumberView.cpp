@@ -31,9 +31,15 @@ NumberView::MaxSize()
 }
 
 void
+NumberView::SetNumber(uint32 number)
+{
+	fNumber = number;
+}
+
+void
 NumberView::Draw(BRect r)
 {
-	if (fNumber == 0)
+	if (fNumber < 2)
 		return;
 
 	BRect bounds = Bounds();

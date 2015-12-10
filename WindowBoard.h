@@ -10,9 +10,15 @@
 #include <Window.h>
 
 class Game;
+class NumberView;
 class WindowBoard;
 class BStringView;
 class BGridLayout;
+
+enum
+{
+	H2048_WINDOW_SHOW = '48WS'
+};
 
 /*
  * This is split up into two classes in order to prevent multiple inheritance
@@ -27,9 +33,10 @@ public:
 			void		MessageReceived(BMessage *message);
 
 private:
-			void		showBoard();
+			void showBoard();
 
 private:
+	NumberView **		fViews;
 	WindowBoard *		fMaster;
 	BStringView *		fScore;
 	BGridLayout *		fBoard;
@@ -50,7 +57,7 @@ protected:
 			void		moveMade();
 
 private:
-	GameWindow		fWindow;
+	GameWindow			fWindow;
 };
 
 #endif // WINDOW_BOARD_H
