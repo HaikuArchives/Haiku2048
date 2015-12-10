@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "NumberView.cpp"
 
+#include <Application.h>
 #include <String.h>
 #include <Messenger.h>
 #include <Box.h>
@@ -59,6 +60,8 @@ GameWindow::GameWindow(WindowBoard *master)
 
 GameWindow::~GameWindow()
 {
+	fMaster->fWindow = NULL;
+	be_app_messenger.SendMessage(B_QUIT_REQUESTED);
 	delete [] fViews;
 }
 
@@ -116,12 +119,6 @@ GameWindow::MessageReceived(BMessage *message)
 }
 
 void
-GameWindow::KeyDown(const char *bytes, int32 numBytes)
-{
-	(new BAlert("A", "B", "C"))->Go();
-}
-
-void
 GameWindow::showBoard()
 {
 	Game *target = fMaster->fTarget;
@@ -145,20 +142,21 @@ GameWindow::showBoard()
 WindowBoard::WindowBoard(Game *target)
 	:
 	GameBoard(target),
-	fWindow(this),
 	fSending(false)
 {
-	fWindow.Show();
+	fWindow = new GameWindow(this);
+	fWindow->Show();
 }
 
 WindowBoard::~WindowBoard()
 {
+	delete fWindow;
 }
 
 void
 WindowBoard::gameStarted()
 {
-	BMessenger messenger(NULL, &fWindow);
+	BMessenger messenger(NULL, fWindow);
 	messenger.SendMessage(H2048_WINDOW_SHOW);
 	fSending = true;
 }
@@ -173,6 +171,6 @@ WindowBoard::gameEnded()
 void
 WindowBoard::moveMade()
 {
-	BMessenger messenger(NULL, &fWindow);
+	BMessenger messenger(NULL, fWindow);
 	messenger.SendMessage(H2048_WINDOW_SHOW);
 }
