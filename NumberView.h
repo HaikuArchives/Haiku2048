@@ -8,11 +8,16 @@
 
 #include <View.h>
 
+class BSize;
+
 class NumberView : public BView
 {
 public:
 						NumberView(uint32 number, float x, float y);
 						~NumberView();
+
+			BSize		MinSize();
+			BSize		MaxSize();
 
 			void		Draw(BRect r);
 

@@ -16,7 +16,7 @@
 
 GameWindow::GameWindow(WindowBoard *master)
 	:
-	BWindow(BRect(100, 100, 500, 400), "Haiku2048", B_TITLED_WINDOW_LOOK, B_NORMAL_WINDOW_FEEL, B_ASYNCHRONOUS_CONTROLS | B_NOT_RESIZABLE),
+	BWindow(BRect(100, 100, 500, 400), "Haiku2048", B_TITLED_WINDOW, 0),
 	fMaster(master)
 {
 	BButton *newGameButton = new BButton("newgame", "New Game",
@@ -26,24 +26,27 @@ GameWindow::GameWindow(WindowBoard *master)
 
 	fBoard = new BGridLayout(5.0, 5.0);
 
-	NumberView *num = new NumberView(1024, 100, 100);
-	NumberView *num2 = new NumberView(1024, 100, 100);
+	NumberView *num = new NumberView(1024, 0, 0);
+	NumberView *num2 = new NumberView(1024, 0, 0);
 
-//	num->ResizeTo(10, 10);
-
-	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_INSETS)
-		.AddGroup(B_HORIZONTAL, 50.0)
+		.AddGroup(B_HORIZONTAL)
 			.Add(newGameButton)
 			.Add(fScore)
 			.End()
-		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-			.Add(fBoard)
-		.AddGlue();
+		.Add(fBoard);
 
+	for (uint32 i = 0; i < 4; i++)
+	{
+		for (uint32 j = 0; j < 4; j++)
+		{
+			NumberView *num = new NumberView(1024, 0, 0);
+			fBoard->AddView(num, i, j);
+		}
+	}
 
-	fBoard->AddView(num, 0, 0);
-	fBoard->AddView(num2, 1, 1);
+	ResizeToPreferred();
 
 }
 
