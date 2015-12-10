@@ -47,7 +47,8 @@ NumberView::Draw(BRect r)
 	c << fNumber;
 	float width = StringWidth(c.String());
 	SetHighColor(255, 0, 0);
-	DrawString(c.String(), BPoint(bounds.left + 50 - width / 2, bounds.bottom - 50 + 10));
+	DrawString(c.String(),
+		BPoint(bounds.left + 50 - width / 2, bounds.bottom - 50 + 10));
 }
 
 NumberView::~NumberView()
