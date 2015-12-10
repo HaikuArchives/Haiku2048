@@ -7,6 +7,7 @@
 #define WINDOW_BOARD_H
 
 #include "GameBoard.h"
+
 #include <Window.h>
 
 class Game;

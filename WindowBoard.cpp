@@ -4,18 +4,19 @@
  */
 
 #include "WindowBoard.h"
+
 #include "Game.h"
 #include "NumberView.cpp"
 
+#include <Alert.h>
 #include <Application.h>
-#include <String.h>
-#include <Messenger.h>
 #include <Box.h>
-#include <StringView.h>
 #include <Button.h>
 #include <LayoutBuilder.h>
-#include <Alert.h>
+#include <Messenger.h>
 #include <Rect.h>
+#include <String.h>
+#include <StringView.h>
 
 GameWindow::GameWindow(WindowBoard *master)
 	:
@@ -27,10 +28,7 @@ GameWindow::GameWindow(WindowBoard *master)
 
 	fScore = new BStringView("score", "Score: 0");
 
-	fBoard = new BGridLayout(5.0, 5.0);
-
-	NumberView *num = new NumberView(1024, 0, 0);
-	NumberView *num2 = new NumberView(1024, 0, 0);
+	fBoard = new BGridLayout();
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_INSETS)
