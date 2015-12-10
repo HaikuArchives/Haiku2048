@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "NumberView.cpp"
 
+#include <String.h>
 #include <Messenger.h>
 #include <Box.h>
 #include <StringView.h>
@@ -58,6 +59,7 @@ GameWindow::GameWindow(WindowBoard *master)
 
 GameWindow::~GameWindow()
 {
+	delete [] fViews;
 }
 
 void
@@ -74,10 +76,49 @@ GameWindow::MessageReceived(BMessage *message)
 		case H2048_WINDOW_SHOW:
 			showBoard();
 			break;
+		case B_KEY_DOWN:
+		{
+			const char *data;
+			ssize_t length;
+			if (fMaster->fSending && message->FindData("bytes", B_STRING_TYPE,
+				(const void **)&data, &length) == B_OK && data[0] >= 28
+				&& data[0] <= 31)
+			{
+				GameMove m;
+
+				switch (data[0])
+				{
+					case 30: //Up
+						m = Up;
+						break;
+					case 28: // Left
+						m = Left;
+						break;
+					case 31: // Down
+						m = Down;
+						break;
+					case 29: // Right
+						m = Right;
+						break;
+				}
+				BMessage move(H2048_MAKE_MOVE);
+				move.AddInt32("direction", m);
+				BMessenger messenger(NULL, fMaster->fTarget);
+				messenger.SendMessage(&move);
+			}
+			BWindow::MessageReceived(message);
+			break;
+		}
 		default:
 			BWindow::MessageReceived(message);
 			break;
 	}
+}
+
+void
+GameWindow::KeyDown(const char *bytes, int32 numBytes)
+{
+	(new BAlert("A", "B", "C"))->Go();
 }
 
 void
@@ -95,12 +136,17 @@ GameWindow::showBoard()
 			fViews[x * sizeY + y]->Invalidate();
 		}
 	}
+
+	BString score;
+	score << "Score: " << fMaster->fTarget->Score();
+	fScore->SetText(score.String());
 }
 
 WindowBoard::WindowBoard(Game *target)
 	:
 	GameBoard(target),
-	fWindow(this)
+	fWindow(this),
+	fSending(false)
 {
 	fWindow.Show();
 }
@@ -114,11 +160,13 @@ WindowBoard::gameStarted()
 {
 	BMessenger messenger(NULL, &fWindow);
 	messenger.SendMessage(H2048_WINDOW_SHOW);
+	fSending = true;
 }
 
 void
 WindowBoard::gameEnded()
 {
+	fSending = false;
 	(new BAlert("Title", "Game Ended", "OK"))->Go();
 }
 

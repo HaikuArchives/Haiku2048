@@ -40,13 +40,12 @@ public:
 
 			uint32		BoardAt(uint32 x, uint32 y) const;
 
-			void		NewGame();
-
 			uint32		Score() const;
 			uint32		SizeX() const;
 			uint32		SizeY() const;
 
 private:
+			void		newGame();
 			void		makeMove(GameMove direction);
 			void		broadcastMessage(BMessage &msg);
 			uint32 *	boardAt(uint32 x, uint32 y);

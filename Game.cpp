@@ -40,6 +40,9 @@ Game::MessageReceived(BMessage *message)
 			move = (GameMove)message->FindInt32("direction");
 			makeMove(move);
 			break;
+		case H2048_NEW_GAME:
+			newGame();
+			break;
 		default:
 			break;
 	}
@@ -64,8 +67,10 @@ Game::BoardAt(uint32 x, uint32 y) const
 }
 
 void
-Game::NewGame()
+Game::newGame()
 {
+	fScore = 0;
+
 	// Clear the board
 	for (uint32 x = 0; x < fSizeX; x++)
 	{

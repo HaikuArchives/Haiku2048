@@ -31,9 +31,10 @@ public:
 						~GameWindow();
 
 			void		MessageReceived(BMessage *message);
+			void		KeyDown(const char *bytes, int32 numBytes);
 
 private:
-			void showBoard();
+			void		showBoard();
 
 private:
 	NumberView **		fViews;
@@ -57,6 +58,7 @@ protected:
 			void		moveMade();
 
 private:
+	bool				fSending;
 	GameWindow			fWindow;
 };
 
