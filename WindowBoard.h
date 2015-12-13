@@ -31,6 +31,7 @@ public:
 						GameWindow(WindowBoard *master);
 						~GameWindow();
 
+			bool		QuitRequested();
 			void		MessageReceived(BMessage *message);
 
 private:

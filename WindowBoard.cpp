@@ -59,8 +59,14 @@ GameWindow::GameWindow(WindowBoard *master)
 GameWindow::~GameWindow()
 {
 	fMaster->fWindow = NULL;
-	be_app_messenger.SendMessage(B_QUIT_REQUESTED);
 	delete [] fViews;
+}
+
+bool
+GameWindow::QuitRequested()
+{
+	be_app_messenger.SendMessage(B_QUIT_REQUESTED);
+	return true;
 }
 
 void
