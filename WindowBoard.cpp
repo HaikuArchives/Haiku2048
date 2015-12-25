@@ -47,7 +47,7 @@ GameWindow::GameWindow(WindowBoard *master)
 	{
 		for (uint32 y = 0; y < sizeY; y++)
 		{
-			NumberView *num = new NumberView(0, 0, 0);
+			NumberView *num = new NumberView(0);
 			fViews[x * sizeY + y] = num;
 			fBoard->AddView(num, x, y);
 		}

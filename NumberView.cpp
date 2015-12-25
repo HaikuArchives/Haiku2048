@@ -8,26 +8,17 @@
 #include <String.h>
 #include <iostream>
 
-NumberView::NumberView(uint32 number, float x, float y)
+NumberView::NumberView(uint32 number)
 	:
-	BView(BRect(x, y, x + 100.0, y + 100.0), "noname", B_FOLLOW_NONE, B_WILL_DRAW),
+	BView("noname", B_WILL_DRAW),
 	fNumber(number)
 {
+	SetExplicitMinSize(BSize(100, 100));
+	SetExplicitMaxSize(BSize(100, 100));
+	SetExplicitPreferredSize(BSize(100, 100));
 	BFont *font = new BFont(be_bold_font);
 	font->SetSize(20.0);
 	SetFont(font);
-}
-
-BSize
-NumberView::MinSize()
-{
-	return BSize(100.0, 100.0);
-}
-
-BSize
-NumberView::MaxSize()
-{
-	return BSize(100.0, 100.0);
 }
 
 void

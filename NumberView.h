@@ -13,11 +13,8 @@ class BSize;
 class NumberView : public BView
 {
 public:
-						NumberView(uint32 number, float x, float y);
+						NumberView(uint32 number);
 						~NumberView();
-
-			BSize		MinSize();
-			BSize		MaxSize();
 
 			void		SetNumber(uint32 number);
 
