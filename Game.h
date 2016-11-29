@@ -36,7 +36,7 @@ public:
 			void		MessageReceived(BMessage *message);
 
 			void		StartWatching(BMessenger *target);
-			bool		StopWatching(BMessenger *target);
+			void		StopWatching(BMessenger *target);
 
 			uint32		BoardAt(uint32 x, uint32 y) const;
 
