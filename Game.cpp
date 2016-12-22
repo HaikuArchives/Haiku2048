@@ -54,10 +54,10 @@ Game::StartWatching(BMessenger *target)
 	fTargets.push_back(target);
 }
 
-bool
+void
 Game::StopWatching(BMessenger *target)
 {
-	return fTargets.erase(std::remove(fTargets.begin(), fTargets.end(), target));
+	fTargets.erase(std::remove(fTargets.begin(), fTargets.end(), target), fTargets.end());
 }
 
 uint32
