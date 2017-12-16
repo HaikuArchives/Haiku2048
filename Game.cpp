@@ -5,7 +5,7 @@
 
 #include "Game.h"
 #include "GameBoard.h"
-
+#include <unistd.h>
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -182,9 +182,10 @@ Game::makeMove(GameMove direction)
 	// For each row of tiles that has to slide
 	for (int32 itP = 0; itP != toP; itP++)
 	{
+		
 		// Tiles we are not allowed to merge with
 		uint32 cutoff = fromS - moveS;
-
+		
 		// For each tile that may slide, in ascending length of possible slide
 		for (int32 itS = fromS + moveS; itS != toS; itS += moveS)
 		{
@@ -192,11 +193,13 @@ Game::makeMove(GameMove direction)
 			P = itP;
 			S = itS;
 			uint32 *source = boardAt(*x, *y);
-
+		
 			// Not a tile, nothing to slide
 			if (*source == 0)
 				continue;
-
+				usleep(25000);
+				BMessage moved(H2048_MOVE_MADE);
+				broadcastMessage(moved);
 			// Slide until hitting the wall or another tile
 			int32 backS = itS - moveS;
 			S = backS;
@@ -231,6 +234,7 @@ Game::makeMove(GameMove direction)
 			// If we merged, increase the exponent
 			if (merged)
 			{
+				
 				cutoff = backS;
 				(*dest)++;
 				scoreChange += 1 << *dest;
@@ -254,14 +258,13 @@ Game::makeMove(GameMove direction)
 		placeY = std::rand() % fSizeY;
 
 		found = BoardAt(placeX, placeY) == 0;
+		
 	}
 	*boardAt(placeX, placeY) = newTile();
 
 	fScore += scoreChange;
 
-	// Notify boards what happened
-	BMessage moved(H2048_MOVE_MADE);
-	broadcastMessage(moved);
+
 
 	if (gameOver())
 	{
