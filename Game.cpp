@@ -150,7 +150,7 @@ Game::makeMove(GameMove direction)
 	// This allows user to undo
 	copyBoard(fBoard, fPreviousBoard);
 	fCanUndo = true;
-	
+
 	switch (direction)
 	{
 		case Left:
@@ -362,4 +362,10 @@ Game::undoMove() {
 
 	copyBoard(fPreviousBoard, fBoard);
 	fCanUndo = false;
+
+	// Notify that the board has changed
+	// TODO: Change H2048_MOVE_MADE to something more general,
+	//       like H2048_BOARD_CHANGED?
+	BMessage moved(H2048_MOVE_MADE);
+	broadcastMessage(moved);
 }
