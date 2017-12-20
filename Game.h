@@ -25,6 +25,7 @@ enum GameMove
 enum
 {
 	H2048_NEW_GAME		= '48NG',
+	H2048_UNDO_MOVE     = '48UM',
 	H2048_MAKE_MOVE		= '48MM'
 };
 
