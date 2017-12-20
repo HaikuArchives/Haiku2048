@@ -173,7 +173,7 @@ WindowBoard::gameEnded()
 }
 
 void
-WindowBoard::moveMade()
+WindowBoard::boardChanged()
 {
 	BMessenger messenger(NULL, fWindow);
 	messenger.SendMessage(H2048_WINDOW_SHOW);

@@ -16,7 +16,7 @@ enum
 {
 	H2048_GAME_STARTED		= '48GS',
 	H2048_GAME_ENDED		= '48GE',
-	H2048_MOVE_MADE			= '48MD'
+	H2048_BOARD_CHANGED		= '48BC'
 };
 
 class GameBoard : public BLooper
@@ -30,7 +30,7 @@ protected:
 	// TODO: Pass the correct parameters and make a BMessage for them.
 	virtual	void		gameStarted() = 0;
 	virtual	void		gameEnded() = 0;
-	virtual	void		moveMade() = 0;
+	virtual	void		boardChanged() = 0;
 
 protected:
 	Game *			fTarget;

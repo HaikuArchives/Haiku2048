@@ -41,7 +41,7 @@ TerminalBoard::gameEnded()
 }
 
 void
-TerminalBoard::moveMade()
+TerminalBoard::boardChanged()
 {
 	showBoard();
 }

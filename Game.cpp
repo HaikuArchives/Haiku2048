@@ -274,9 +274,10 @@ Game::makeMove(GameMove direction)
 
 	fScore += scoreChange;
 
-	// Notify boards what happened
-	BMessage moved(H2048_MOVE_MADE);
-	broadcastMessage(moved);
+	// Notify that the board has changed
+	// to redraw the board for example
+	BMessage changed(H2048_BOARD_CHANGED);
+	broadcastMessage(changed);
 
 	if (gameOver())
 	{
@@ -365,9 +366,6 @@ Game::undoMove() {
 	fScore = fPreviousScore;
 	fCanUndo = false;
 
-	// Notify that the board has changed
-	// TODO: Change H2048_MOVE_MADE to something more general,
-	//       like H2048_BOARD_CHANGED?
-	BMessage moved(H2048_MOVE_MADE);
-	broadcastMessage(moved);
+	BMessage changed(H2048_BOARD_CHANGED);
+	broadcastMessage(changed);
 }

@@ -56,7 +56,7 @@ public:
 protected:
 			void		gameStarted();
 			void		gameEnded();
-			void		moveMade();
+			void		boardChanged();
 
 private:
 	bool				fSending;
