@@ -11,6 +11,7 @@
 #include <Window.h>
 
 class Game;
+class BButton;
 class NumberView;
 class WindowBoard;
 class BStringView;
@@ -47,6 +48,10 @@ private:
 	WindowBoard *		fMaster;
 	BStringView *		fScore;
 	BGridLayout *		fBoard;
+
+	// we have to control the state of it
+	// (enabled / disabled)
+	BButton * 			undoButton;
 };
 
 
