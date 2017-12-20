@@ -28,6 +28,7 @@ GameWindow::GameWindow(WindowBoard *master)
 
 	undoButton = new BButton("undomove", "Undo last move",
 		new BMessage(H2048_UNDO_MOVE));
+	undoButton->SetEnabled(false);
 
 	fScore = new BStringView("score", "Score: 0");
 
@@ -93,6 +94,15 @@ GameWindow::MessageReceived(BMessage *message)
 		}
 		case H2048_UNDO_MOVE:
 		{
+			if (!fMaster->fSending) {
+				// fMaster->fSending is false when:
+				// * The game hasn't started (unlikely, and the button is disabled anyway)
+				// * Game over
+				// In case of game over, we have to make it true, so that
+				// subsequent keypressed are acknowledged
+				fMaster->fSending = true;
+			}
+			
 			BMessenger game(NULL, fMaster->fTarget);
 			game.SendMessage(message);
 			break;
@@ -187,7 +197,7 @@ WindowBoard::gameStarted()
 
 void
 WindowBoard::gameEnded()
-{
+{	
 	fSending = false;
 	(new BAlert("Title", "Game Ended", "OK"))->Go();
 }
