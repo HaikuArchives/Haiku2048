@@ -146,9 +146,10 @@ Game::makeMove(GameMove direction)
 	int32 *x; // Pointer to the direction that corresponds to the X axis
 	int32 *y; // Pointer to the direction that corresponds to the Y axis
 
-	// Copy current board state before modifying it
+	// Save current board state before modifying it
 	// This allows user to undo
 	copyBoard(fBoard, fPreviousBoard);
+	fPreviousScore = fScore;
 	fCanUndo = true;
 
 	switch (direction)
@@ -361,6 +362,7 @@ Game::undoMove() {
 	if (!fCanUndo) return;
 
 	copyBoard(fPreviousBoard, fBoard);
+	fScore = fPreviousScore;
 	fCanUndo = false;
 
 	// Notify that the board has changed
