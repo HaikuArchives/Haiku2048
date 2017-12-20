@@ -30,7 +30,7 @@ protected:
 	// TODO: Pass the correct parameters and make a BMessage for them.
 	virtual	void		gameStarted() = 0;
 	virtual	void		gameEnded() = 0;
-	virtual	void		boardChanged() = 0;
+	virtual	void		boardChanged(bool canUndo) = 0;
 
 protected:
 	Game *			fTarget;

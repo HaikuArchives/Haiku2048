@@ -86,7 +86,9 @@ GameWindow::MessageReceived(BMessage *message)
 		}
 		case H2048_WINDOW_SHOW:
 		{
-			showBoard();
+			bool canUndo = false;
+			message->FindBool("canUndo", &canUndo);
+			showBoard(canUndo);
 			break;
 		}
 		case H2048_UNDO_MOVE:
@@ -135,8 +137,10 @@ GameWindow::MessageReceived(BMessage *message)
 }
 
 void
-GameWindow::showBoard()
+GameWindow::showBoard(bool canUndo)
 {
+	undoButton->SetEnabled(canUndo);
+
 	Game *target = fMaster->fTarget;
 	uint32 sizeX = target->SizeX();
 	uint32 sizeY = target->SizeY();
@@ -172,8 +176,12 @@ WindowBoard::~WindowBoard()
 void
 WindowBoard::gameStarted()
 {
+	BMessage redraw(H2048_WINDOW_SHOW);
+	redraw.AddBool("canUndo", false);
+
 	BMessenger messenger(NULL, fWindow);
-	messenger.SendMessage(H2048_WINDOW_SHOW);
+	messenger.SendMessage(&redraw);
+
 	fSending = true;
 }
 
@@ -185,8 +193,11 @@ WindowBoard::gameEnded()
 }
 
 void
-WindowBoard::boardChanged()
+WindowBoard::boardChanged(bool canUndo)
 {
+	BMessage redraw(H2048_WINDOW_SHOW);
+	redraw.AddBool("canUndo", canUndo);
+
 	BMessenger messenger(NULL, fWindow);
-	messenger.SendMessage(H2048_WINDOW_SHOW);
+	messenger.SendMessage(&redraw);
 }

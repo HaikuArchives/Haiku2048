@@ -34,7 +34,10 @@ GameBoard::MessageReceived(BMessage *message)
 			gameEnded();
 			break;
 		case H2048_BOARD_CHANGED:
-			boardChanged();
+			bool canUndo;
+			message->FindBool("canUndo", &canUndo);
+
+			boardChanged(canUndo);
 			break;
 		default:
 			break;

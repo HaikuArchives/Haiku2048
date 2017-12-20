@@ -41,7 +41,7 @@ TerminalBoard::gameEnded()
 }
 
 void
-TerminalBoard::boardChanged()
+TerminalBoard::boardChanged(bool canUndo)
 {
 	showBoard();
 }
