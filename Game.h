@@ -48,6 +48,8 @@ public:
 private:
 			void		newGame();
 			void		makeMove(GameMove direction);
+			void		undoMove();
+			void		Game::copyBoard(uint32 *from, uint32 *to);
 			void		broadcastMessage(BMessage &msg);
 			uint32 *	boardAt(uint32 x, uint32 y);
 			uint32		newTile();
@@ -57,6 +59,15 @@ private:
 	std::vector<BMessenger *>		fTargets;
 	// Use a one-dimensional array for the board to save some space.
 	uint32 *						fBoard;
+
+	// Saves board state at previous move
+	uint32 *						fPreviousBoard;
+
+	// fCanUndo is false when:
+	// * There is no previous state to undo (right after new game)
+	// * User has already undone (can only undo once)
+	bool							fCanUndo;
+
 	uint32							fSizeX, fSizeY;
 	bool							fInGame;
 	uint32							fScore;

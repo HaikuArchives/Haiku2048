@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include <Message.h>
@@ -19,15 +20,19 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	fSizeY(sizeY),
 	fTargets(),
 	fInGame(false),
-	fScore(0)
+	fScore(0),
+	fCanUndo(false)
 {
 	fBoard = new uint32[fSizeX * fSizeY];
+	fPreviousBoard = new uint32[fSizeX * fSizeY];
+
 	Run();
 }
 
 Game::~Game()
 {
 	delete [] fBoard;
+	delete [] fPreviousBoard;
 }
 
 void
@@ -42,6 +47,9 @@ Game::MessageReceived(BMessage *message)
 			break;
 		case H2048_NEW_GAME:
 			newGame();
+			break;
+		case H2048_UNDO_MOVE:
+			undoMove();
 			break;
 		default:
 			break;
@@ -70,6 +78,7 @@ void
 Game::newGame()
 {
 	fScore = 0;
+	fCanUndo = false;
 
 	// Clear the board
 	for (uint32 x = 0; x < fSizeX; x++)
@@ -137,6 +146,11 @@ Game::makeMove(GameMove direction)
 	int32 *x; // Pointer to the direction that corresponds to the X axis
 	int32 *y; // Pointer to the direction that corresponds to the Y axis
 
+	// Copy current board state before modifying it
+	// This allows user to undo
+	copyBoard(fBoard, fPreviousBoard);
+	fCanUndo = true;
+	
 	switch (direction)
 	{
 		case Left:
@@ -331,4 +345,21 @@ Game::gameOver()
 		}
 	}
 	return true;
+}
+
+void
+Game::copyBoard(uint32 *from, uint32 *to) {
+	for (int32 x = 0; x < fSizeX; ++x) {
+		for (int32 y = 0; y < fSizeY; ++y) {
+			to[x * fSizeX + y] = from[x * fSizeX + y];
+		}
+	}
+}
+
+void
+Game::undoMove() {
+	if (!fCanUndo) return;
+
+	copyBoard(fPreviousBoard, fBoard);
+	fCanUndo = false;
 }
