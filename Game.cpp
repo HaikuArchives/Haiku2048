@@ -277,6 +277,7 @@ Game::makeMove(GameMove direction)
 	// Notify that the board has changed
 	// to redraw the board for example
 	BMessage changed(H2048_BOARD_CHANGED);
+	changed.AddBool("canUndo", true);
 	broadcastMessage(changed);
 
 	if (gameOver())
@@ -367,5 +368,7 @@ Game::undoMove() {
 	fCanUndo = false;
 
 	BMessage changed(H2048_BOARD_CHANGED);
+	// Now user can't undo anymore
+	changed.AddBool("canUndo", false);
 	broadcastMessage(changed);
 }

@@ -41,7 +41,7 @@ public:
 			void		FrameResized(float width, float height);
 			void		MessageReceived(BMessage *message);
 private:
-			void		showBoard();
+			void		showBoard(bool canUndo);
 
 private:
 	NumberView **		fViews;
@@ -66,7 +66,7 @@ public:
 protected:
 			void		gameStarted();
 			void		gameEnded();
-			void		boardChanged();
+			void		boardChanged(bool canUndo);
 
 private:
 	bool				fSending;
