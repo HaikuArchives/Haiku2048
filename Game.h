@@ -60,9 +60,9 @@ private:
 	// Use a one-dimensional array for the board to save some space.
 	uint32 *						fBoard;
 
-	// Saves board state at previous move
+	// Saves board state and score at previous move
 	uint32 *						fPreviousBoard;
-
+	uint32							fPreviousScore;
 	// fCanUndo is false when:
 	// * There is no previous state to undo (right after new game)
 	// * User has already undone (can only undo once)
