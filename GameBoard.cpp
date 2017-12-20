@@ -33,8 +33,8 @@ GameBoard::MessageReceived(BMessage *message)
 		case H2048_GAME_ENDED:
 			gameEnded();
 			break;
-		case H2048_MOVE_MADE:
-			moveMade();
+		case H2048_BOARD_CHANGED:
+			boardChanged();
 			break;
 		default:
 			break;
