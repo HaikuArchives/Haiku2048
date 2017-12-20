@@ -26,6 +26,9 @@ GameWindow::GameWindow(WindowBoard *master)
 	BButton *newGameButton = new BButton("newgame", "New Game",
 		new BMessage(H2048_NEW_GAME));
 
+	undoButton = new BButton("undomove", "Undo last move",
+		new BMessage(H2048_UNDO_MOVE));
+
 	fScore = new BStringView("score", "Score: 0");
 
 	fBoard = new BGridLayout();
@@ -34,6 +37,7 @@ GameWindow::GameWindow(WindowBoard *master)
 		.SetInsets(B_USE_WINDOW_INSETS)
 		.AddGroup(B_HORIZONTAL)
 			.Add(newGameButton)
+			.Add(undoButton)
 			.Add(fScore)
 			.End()
 		.Add(fBoard);
@@ -81,8 +85,16 @@ GameWindow::MessageReceived(BMessage *message)
 			break;
 		}
 		case H2048_WINDOW_SHOW:
+		{
 			showBoard();
 			break;
+		}
+		case H2048_UNDO_MOVE:
+		{
+			BMessenger game(NULL, fMaster->fTarget);
+			game.SendMessage(message);
+			break;
+		}
 		case B_KEY_DOWN:
 		{
 			const char *data;
