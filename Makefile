@@ -32,7 +32,7 @@ SRCS = App.cpp WindowBoard.cpp TerminalBoard.cpp GameBoard.cpp Game.cpp
 
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.
-RDEFS = 
+RDEFS = haiku2048.rdef
 
 #	Specify the resource files to use. Full or relative paths can be used.
 #	Both RDEFS and RSRCS can be utilized in the same Makefile.
