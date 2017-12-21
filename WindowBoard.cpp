@@ -115,10 +115,15 @@ GameWindow::MessageReceived(BMessage *message)
 		{
 			const char *data;
 			ssize_t length;
-			if (fMaster->fSending && message->FindData("bytes", B_STRING_TYPE,
-				(const void **)&data, &length) == B_OK && data[0] >= 28
-				&& data[0] <= 31)
+			if (fMaster->fSending
+				&& message->FindData("bytes", B_STRING_TYPE, (const void **)&data, &length) == B_OK
+				&& (data[0] == 'u' || (data[0] >= 28 && data[0] <= 31)))
 			{
+				if (data[0] == 'u') {
+					PostMessage(H2048_UNDO_MOVE);
+					break;
+				}
+
 				GameMove m;
 
 				switch (data[0])
@@ -221,7 +226,7 @@ WindowBoard::gameStarted()
 
 void
 WindowBoard::gameEnded()
-{	
+{
 	fSending = false;
 	(new BAlert("Title", "Game Ended", "OK"))->Go();
 }
