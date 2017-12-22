@@ -10,7 +10,7 @@
 
 float squareSize = 100;
 
-void SetScale (float scale)
+void ScaleBy (float scale)
 {
 	squareSize *= scale;
 }
@@ -20,6 +20,10 @@ NumberView::NumberView(uint32 number)
 	BView("noname", B_WILL_DRAW),
 	fNumber(number)
 {
+	UpdateTiles();
+}
+
+void NumberView::UpdateTiles(){
 	SetExplicitMinSize(BSize(squareSize, squareSize));
 	SetExplicitMaxSize(BSize(squareSize, squareSize));
 	SetExplicitPreferredSize(BSize(squareSize, squareSize));
@@ -37,14 +41,6 @@ NumberView::SetNumber(uint32 number)
 void
 NumberView::Draw(BRect r)
 {
-	// Update squares everytime a window is resized
-	SetExplicitMinSize(BSize(squareSize, squareSize));
-	SetExplicitMaxSize(BSize(squareSize, squareSize));
-	SetExplicitPreferredSize(BSize(squareSize, squareSize));
-	BFont *font = new BFont(be_bold_font);
-	font->SetSize(squareSize/2);
-	SetFont(font);
-	
 	BRect bounds = Bounds();
 	if (fNumber < 2) {
 		SetHighColor(205,193,180);
