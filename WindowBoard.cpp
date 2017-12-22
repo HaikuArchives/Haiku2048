@@ -23,13 +23,11 @@ float prevHeight;
 float defaultWidth;
 float defaultHeight;
 
-
 GameWindow::GameWindow(WindowBoard *master)
 	:
 	BWindow(BRect(100, 100, 500, 400), "Haiku2048", B_TITLED_WINDOW, 0),
 	fMaster(master)
-{
-	
+{	
 	BButton *newGameButton = new BButton("newgame", "New Game",
 		new BMessage(H2048_NEW_GAME));
 
@@ -44,7 +42,7 @@ GameWindow::GameWindow(WindowBoard *master)
 			.Add(fScore)
 			.End()
 		.Add(fBoard);
-	
+
 	uint32 sizeX = fMaster->fTarget->SizeX();
 	uint32 sizeY = fMaster->fTarget->SizeY();
 	
@@ -59,7 +57,6 @@ GameWindow::GameWindow(WindowBoard *master)
 			fBoard->AddView(num, x, y);
 		}
 	}
-
 	ResizeToPreferred();
 	BRect rect = Bounds();
 	prevWidth = rect.Width();
@@ -140,7 +137,7 @@ GameWindow::showBoard()
 	Game *target = fMaster->fTarget;
 	uint32 sizeX = target->SizeX();
 	uint32 sizeY = target->SizeY();
-	
+
 	for (uint32 x = 0; x < sizeX; x++)
 	{
 		for (uint32 y = 0; y < sizeY; y++)
@@ -149,7 +146,7 @@ GameWindow::showBoard()
 			fViews[x * sizeY + y]->Invalidate();
 		}
 	}
-	
+
 	BString score;
 	score << "Score: " << fMaster->fTarget->Score();
 	fScore->SetText(score.String());
@@ -157,7 +154,7 @@ GameWindow::showBoard()
 
 void
 GameWindow::FrameResized(float width, 
-						 float height)
+			 float height)
 {
 	float ratio = width/prevWidth;
 	SetScale(ratio);
