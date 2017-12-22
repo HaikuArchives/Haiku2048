@@ -45,7 +45,7 @@ GameWindow::GameWindow(WindowBoard *master)
 
 	uint32 sizeX = fMaster->fTarget->SizeX();
 	uint32 sizeY = fMaster->fTarget->SizeY();
-	
+
 	fViews = new NumberView *[sizeX * sizeY];
 
 	for (uint32 x = 0; x < sizeX; x++)
