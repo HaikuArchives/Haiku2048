@@ -32,6 +32,7 @@ public:
 						~GameWindow();
 
 			bool		QuitRequested();
+			void		GameWindow::FrameResized(float width, float height);
 			void		MessageReceived(BMessage *message);
 
 private:

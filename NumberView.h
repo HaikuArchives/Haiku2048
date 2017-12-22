@@ -17,6 +17,7 @@ public:
 						~NumberView();
 
 			void		SetNumber(uint32 number);
+			void		SetScale (float scale);
 
 			void		Draw(BRect r);
 
