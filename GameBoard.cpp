@@ -36,6 +36,8 @@ GameBoard::MessageReceived(BMessage *message)
 		case H2048_MOVE_MADE:
 			moveMade();
 			break;
+		case H2048_REQUEST_NAME:
+			nameRequest();
 		default:
 			break;
 	}

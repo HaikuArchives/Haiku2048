@@ -18,6 +18,7 @@ protected:
 			void		gameStarted();
 			void		gameEnded();
 			void		moveMade();
+			void		nameRequest();
 
 private:
 			void		showBoard();

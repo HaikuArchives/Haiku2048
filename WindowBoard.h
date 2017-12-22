@@ -15,10 +15,12 @@ class NumberView;
 class WindowBoard;
 class BStringView;
 class BGridLayout;
+class BTextControl;
 
 enum
 {
-	H2048_WINDOW_SHOW = '48WS'
+	H2048_WINDOW_SHOW = '48WS',
+	H2048_SET_NAME    = '48SN'
 };
 
 /*
@@ -41,6 +43,8 @@ private:
 	NumberView **		fViews;
 	WindowBoard *		fMaster;
 	BStringView *		fScore;
+	BStringView *		fScore_Highest;
+	BTextControl*       fInputBox;
 	BGridLayout *		fBoard;
 };
 
@@ -57,6 +61,7 @@ protected:
 			void		gameStarted();
 			void		gameEnded();
 			void		moveMade();
+			void		nameRequest();
 
 private:
 	bool				fSending;

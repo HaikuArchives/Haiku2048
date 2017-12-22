@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
+#include <cstring>
 
 #include <Message.h>
 #include <Messenger.h>
@@ -21,6 +23,16 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	fInGame(false),
 	fScore(0)
 {
+	std::ifstream highscore("Highscore.dat", std::ios::binary);
+	memset(fUsername, 0, sizeof(char) * 32);
+	memset(fPlayername, 0, sizeof(char) * 32);
+	if(!highscore)
+		fScore_Highest = 0;
+	else
+		highscore.read((char*)&fScore_Highest, sizeof(uint32));
+		highscore.read(fUsername, sizeof(char) * 32);
+	if(!fUsername[0])
+		sprintf(fUsername, "Noname");
 	fBoard = new uint32[fSizeX * fSizeY];
 	Run();
 }
@@ -43,6 +55,16 @@ Game::MessageReceived(BMessage *message)
 		case H2048_NEW_GAME:
 			newGame();
 			break;
+		case H2048_NAME_REQUESTED:
+		{
+			sprintf(fPlayername, "%s", (const char*)message->FindString("playername"));
+			memcpy(fUsername, fPlayername, sizeof(char) * 32);
+			BMessage moved(H2048_MOVE_MADE);
+			// Update Score
+			broadcastMessage(moved);
+			writeHighscore();
+			break;
+		}
 		default:
 			break;
 	}
@@ -107,6 +129,16 @@ Game::newGame()
 	fInGame = true;
 }
 
+void
+Game::writeHighscore()
+{
+	std::ofstream highscore("Highscore.dat", std::ios::binary);
+	if(highscore){
+		highscore.write((char*)&fScore_Highest, sizeof(uint32));
+		highscore.write(fPlayername, sizeof(char) * 32);
+	}
+}
+
 uint32
 Game::Score() const
 {
@@ -123,6 +155,18 @@ uint32
 Game::SizeY() const
 {
 	return fSizeY;
+}
+
+uint32
+Game::Score_Highest() const
+{
+	return fScore_Highest;
+}
+
+const char *
+Game::Username() const
+{
+	return fUsername;
 }
 
 void
@@ -258,6 +302,17 @@ Game::makeMove(GameMove direction)
 	*boardAt(placeX, placeY) = newTile();
 
 	fScore += scoreChange;
+	if(fScore > fScore_Highest){
+		// if fPlayername[0] is '\0', ask for username
+		if(!fPlayername[0]){
+			BMessage request_name(H2048_REQUEST_NAME);
+			broadcastMessage(request_name);
+		}
+		// update highest and username
+		fScore_Highest = fScore;
+		// write to file
+		writeHighscore();
+	}
 
 	// Notify boards what happened
 	BMessage moved(H2048_MOVE_MADE);

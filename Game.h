@@ -25,7 +25,8 @@ enum GameMove
 enum
 {
 	H2048_NEW_GAME		= '48NG',
-	H2048_MAKE_MOVE		= '48MM'
+	H2048_MAKE_MOVE		= '48MM',
+	H2048_NAME_REQUESTED= '48NR'
 };
 
 class Game : public BLooper
@@ -41,8 +42,10 @@ public:
 			uint32		BoardAt(uint32 x, uint32 y) const;
 
 			uint32		Score() const;
+			uint32		Score_Highest() const;
 			uint32		SizeX() const;
 			uint32		SizeY() const;
+			const char *Username() const;
 
 private:
 			void		newGame();
@@ -51,6 +54,8 @@ private:
 			uint32 *	boardAt(uint32 x, uint32 y);
 			uint32		newTile();
 			bool		gameOver();
+			
+			void		writeHighscore();
 
 private:
 	std::vector<BMessenger *>		fTargets;
@@ -59,6 +64,9 @@ private:
 	uint32							fSizeX, fSizeY;
 	bool							fInGame;
 	uint32							fScore;
+	uint32							fScore_Highest;
+	char							fUsername[32];
+	char							fPlayername[32];
 };
 
 #endif // GAME_H

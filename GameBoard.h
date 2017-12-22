@@ -16,7 +16,8 @@ enum
 {
 	H2048_GAME_STARTED		= '48GS',
 	H2048_GAME_ENDED		= '48GE',
-	H2048_MOVE_MADE			= '48MD'
+	H2048_MOVE_MADE			= '48MD',
+	H2048_REQUEST_NAME		= '48RN'
 };
 
 class GameBoard : public BLooper
@@ -31,6 +32,7 @@ protected:
 	virtual	void		gameStarted() = 0;
 	virtual	void		gameEnded() = 0;
 	virtual	void		moveMade() = 0;
+	virtual void 		nameRequest() = 0;
 
 protected:
 	Game *			fTarget;
