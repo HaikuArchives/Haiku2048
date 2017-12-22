@@ -151,10 +151,6 @@ void
 GameWindow::FrameResized(float width, 
 			 float height)
 {
-	float ratio = width/prevWidth;
-	SetScale(ratio);
-	prevWidth = width;
-	prevHeight = height;
 	// We don't want the user to scale the window so small that
 	// there's no space for the buttons.
 	if (width < defaultWidth) {
@@ -162,8 +158,13 @@ GameWindow::FrameResized(float width,
 		SetScale(1);
 	}
 	// Maintain the same width:height ratio
-	else ResizeTo(width, height*ratio);
-	UpdateTiles();
+	else {
+		float ratio = width/prevWidth;
+		SetScale(ratio);
+		prevWidth = width;
+		prevHeight = height;
+		ResizeTo(width, height*ratio);
+	}
 }
 
 WindowBoard::WindowBoard(Game *target)
