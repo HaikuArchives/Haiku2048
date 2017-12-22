@@ -27,7 +27,7 @@ GameWindow::GameWindow(WindowBoard *master)
 	:
 	BWindow(BRect(100, 100, 500, 400), "Haiku2048", B_TITLED_WINDOW, 0),
 	fMaster(master)
-{	
+{
 	BButton *newGameButton = new BButton("newgame", "New Game",
 		new BMessage(H2048_NEW_GAME));
 
