@@ -13,7 +13,7 @@ float squareSize = 100;
 void ScaleBy (float scale)
 {
 	squareSize *= scale;
-	UpdateTiles();
+	// UpdateTiles();
 }
 
 NumberView::NumberView(uint32 number)
@@ -42,6 +42,7 @@ NumberView::SetNumber(uint32 number)
 void
 NumberView::Draw(BRect r)
 {
+	UpdateTiles();
 	BRect bounds = Bounds();
 	if (fNumber < 2) {
 		SetHighColor(205,193,180);
