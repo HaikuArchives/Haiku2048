@@ -11,6 +11,8 @@
 #include <Looper.h>
 #include <SupportDefs.h>
 
+#define HIGHSCORE_FILENAME "Haiku2048-Highscore.dat"
+
 class BMessage;
 class BMessenger;
 
@@ -67,6 +69,7 @@ private:
 	uint32							fScore_Highest;
 	char							fUsername[32];
 	char							fPlayername[32];
+	char							fHighscore_path[128];
 };
 
 #endif // GAME_H

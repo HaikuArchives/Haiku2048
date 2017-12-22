@@ -14,6 +14,9 @@
 
 #include <Message.h>
 #include <Messenger.h>
+#include <FindDirectory.h>
+#include <Path.h>
+#include <Volume.h>
 
 Game::Game(uint32 sizeX, uint32 sizeY)
 	:
@@ -23,7 +26,14 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	fInGame(false),
 	fScore(0)
 {
-	std::ifstream highscore("Highscore.dat", std::ios::binary);
+	memset(fHighscore_path, 0, sizeof(char) * 128);
+	dev_t volume = dev_for_path("/boot");
+	char buffer[100];
+	status_t result = find_directory(B_USER_SETTINGS_DIRECTORY, volume, false, buffer, 100);
+	sprintf(fHighscore_path, "%s/%s", buffer, HIGHSCORE_FILENAME);
+	std::cout << fHighscore_path << std::endl;
+	
+	std::ifstream highscore(fHighscore_path, std::ios::binary);
 	memset(fUsername, 0, sizeof(char) * 32);
 	memset(fPlayername, 0, sizeof(char) * 32);
 	if(!highscore)
@@ -132,7 +142,7 @@ Game::newGame()
 void
 Game::writeHighscore()
 {
-	std::ofstream highscore("Highscore.dat", std::ios::binary);
+	std::ofstream highscore(fHighscore_path, std::ios::binary);
 	if(highscore){
 		highscore.write((char*)&fScore_Highest, sizeof(uint32));
 		highscore.write(fPlayername, sizeof(char) * 32);
