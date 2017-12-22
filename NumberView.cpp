@@ -8,16 +8,24 @@
 #include <String.h>
 #include <iostream>
 
+float squareSize = 100;
+
+
+void SetScale (float scale)
+{
+	squareSize *= scale;
+}
+
 NumberView::NumberView(uint32 number)
 	:
 	BView("noname", B_WILL_DRAW),
 	fNumber(number)
 {
-	SetExplicitMinSize(BSize(100, 100));
-	SetExplicitMaxSize(BSize(100, 100));
-	SetExplicitPreferredSize(BSize(100, 100));
+	SetExplicitMinSize(BSize(squareSize, squareSize));
+	SetExplicitMaxSize(BSize(squareSize, squareSize));
+	SetExplicitPreferredSize(BSize(squareSize, squareSize));
 	BFont *font = new BFont(be_bold_font);
-	font->SetSize(20.0);
+	font->SetSize(squareSize/2);
 	SetFont(font);
 }
 
@@ -27,9 +35,18 @@ NumberView::SetNumber(uint32 number)
 	fNumber = number;
 }
 
+
 void
 NumberView::Draw(BRect r)
 {
+	// Update squares everytime a window is resized
+	SetExplicitMinSize(BSize(squareSize, squareSize));
+	SetExplicitMaxSize(BSize(squareSize, squareSize));
+	SetExplicitPreferredSize(BSize(squareSize, squareSize));
+	BFont *font = new BFont(be_bold_font);
+	font->SetSize(squareSize/2);
+	SetFont(font);
+	
 	BRect bounds = Bounds();
 	if (fNumber < 2) {
 		SetHighColor(205,193,180);
@@ -64,9 +81,9 @@ NumberView::Draw(BRect r)
 	SetHighColor(color_background);
 	FillRect(bounds);
 	SetHighColor(color_foreground);
-	SetFontSize(30);
+	SetFontSize(squareSize/2);
 	DrawString(c.String(),
-		BPoint(bounds.left + 46 - width / 2, bounds.bottom - 46 + 10));
+		BPoint(bounds.left + (squareSize/2) - width / 2, bounds.bottom - (squareSize/2) + (squareSize*0.2)));
 }
 
 NumberView::~NumberView()
