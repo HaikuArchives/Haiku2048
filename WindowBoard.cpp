@@ -18,11 +18,6 @@
 #include <String.h>
 #include <StringView.h>
 
-float prevWidth;
-float prevHeight;
-float defaultWidth;
-float defaultHeight;
-
 GameWindow::GameWindow(WindowBoard *master)
 	:
 	BWindow(BRect(100, 100, 500, 400), "Haiku2048", B_TITLED_WINDOW, 0),
@@ -160,14 +155,15 @@ GameWindow::FrameResized(float width,
 	SetScale(ratio);
 	prevWidth = width;
 	prevHeight = height;
-	// Keep everything in scale and in the right width:height ratio
-	ResizeTo(width, height*ratio);
 	// We don't want the user to scale the window so small that
 	// there's no space for the buttons.
 	if (width < defaultWidth) {
 		ResizeTo(defaultWidth, defaultHeight);
 		SetScale(1);
 	}
+	// Maintain the same width:height ratio
+	else ResizeTo(width, height*ratio);
+	UpdateTiles();
 }
 
 WindowBoard::WindowBoard(Game *target)
