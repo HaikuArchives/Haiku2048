@@ -30,11 +30,15 @@ class GameWindow : public BWindow
 public:
 						GameWindow(WindowBoard *master);
 						~GameWindow();
-
+						
+			float 		prevWidth;
+			float 		prevHeight;
+			float 		defaultWidth;
+			float 		defaultHeight;
+			
 			bool		QuitRequested();
 			void		FrameResized(float width, float height);
 			void		MessageReceived(BMessage *message);
-
 private:
 			void		showBoard();
 
