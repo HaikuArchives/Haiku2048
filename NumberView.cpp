@@ -10,7 +10,6 @@
 
 float squareSize = 100;
 
-
 void SetScale (float scale)
 {
 	squareSize *= scale;
@@ -34,7 +33,6 @@ NumberView::SetNumber(uint32 number)
 {
 	fNumber = number;
 }
-
 
 void
 NumberView::Draw(BRect r)
