@@ -17,6 +17,7 @@
 #include <FindDirectory.h>
 #include <Path.h>
 #include <Volume.h>
+#include <Directory.h>
 
 Game::Game(uint32 sizeX, uint32 sizeY)
 	:
@@ -30,7 +31,9 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	dev_t volume = dev_for_path("/boot");
 	char buffer[100];
 	status_t result = find_directory(B_USER_SETTINGS_DIRECTORY, volume, false, buffer, 100);
-	sprintf(fHighscore_path, "%s/%s", buffer, HIGHSCORE_FILENAME);
+	sprintf(fHighscore_path, "%s/%s", buffer, HIGHSCORE_DIRECTORY);
+	result = create_directory(fHighscore_path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+	sprintf(fHighscore_path, "%s/%s", fHighscore_path, HIGHSCORE_FILENAME);
 	std::cout << fHighscore_path << std::endl;
 	
 	std::ifstream highscore(fHighscore_path, std::ios::binary);
