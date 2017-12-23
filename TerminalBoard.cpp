@@ -46,6 +46,12 @@ TerminalBoard::boardChanged(bool canUndo)
 	showBoard();
 }
 
+void
+TerminalBoard::nameRequest()
+{
+	std::cout << "Please fill the name and press enter key in window!" << std::endl;
+}
+
 uint32
 digits(uint32 num)
 {
@@ -118,5 +124,10 @@ TerminalBoard::showBoard()
 		}
 		std::cout << '\n';
 	}
-	std::cout << dashes << "\nScore: " << fTarget->Score() << std::endl;
+	std::cout << dashes << "\nHigh Score: " << fTarget->Score_Highest();
+	if(fTarget->Username()[0])
+		std::cout << " By " << fTarget->Username() << std::endl;
+	else
+		std::cout << std::endl;
+	std::cout << "Score: " << fTarget->Score() << std::endl;
 }

@@ -18,7 +18,7 @@ protected:
 			void		gameStarted();
 			void		gameEnded();
 			void		boardChanged(bool canUndo);
-
+			void		nameRequest();
 private:
 			void		showBoard();
 

@@ -9,9 +9,15 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
+#include <cstring>
 
 #include <Message.h>
 #include <Messenger.h>
+#include <FindDirectory.h>
+#include <Path.h>
+#include <Volume.h>
+#include <Directory.h>
 
 Game::Game(uint32 sizeX, uint32 sizeY)
 	:
@@ -22,6 +28,24 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	fScore(0),
 	fCanUndo(false)
 {
+	memset(fHighscore_path, 0, sizeof(char) * 128);
+	dev_t volume = dev_for_path("/boot");
+	char buffer[100];
+	status_t result = find_directory(B_USER_SETTINGS_DIRECTORY, volume, false, buffer, 100);
+	sprintf(fHighscore_path, "%s/%s", buffer, HIGHSCORE_DIRECTORY);
+	result = create_directory(fHighscore_path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+	sprintf(fHighscore_path, "%s/%s", fHighscore_path, HIGHSCORE_FILENAME);
+	std::cout << fHighscore_path << std::endl;
+	
+	std::ifstream highscore(fHighscore_path, std::ios::binary);
+	memset(fUsername, 0, sizeof(char) * 32);
+	memset(fPlayername, 0, sizeof(char) * 32);
+	if(!highscore)
+		fScore_Highest = 0;
+	else{
+		highscore.read((char*)&fScore_Highest, sizeof(uint32));
+		highscore.read(fUsername, sizeof(char) * 32);
+	}
 	fBoard = new uint32[fSizeX * fSizeY];
 	fPreviousBoard = new uint32[fSizeX * fSizeY];
 
@@ -50,6 +74,16 @@ Game::MessageReceived(BMessage *message)
 		case H2048_UNDO_MOVE:
 			undoMove();
 			break;
+		case H2048_NAME_REQUESTED:
+		{
+			sprintf(fPlayername, "%s", (const char*)message->FindString("playername"));
+			memcpy(fUsername, fPlayername, sizeof(char) * 32);
+			BMessage changed(H2048_BOARD_CHANGED);
+			changed.AddBool("canUndo", false);
+			broadcastMessage(changed);
+			writeHighscore();
+			break;
+		}
 		default:
 			break;
 	}
@@ -115,6 +149,16 @@ Game::newGame()
 	fInGame = true;
 }
 
+void
+Game::writeHighscore()
+{
+	std::ofstream highscore(fHighscore_path, std::ios::binary);
+	if(highscore){
+		highscore.write((char*)&fScore_Highest, sizeof(uint32));
+		highscore.write(fPlayername, sizeof(char) * 32);
+	}
+}
+
 uint32
 Game::Score() const
 {
@@ -131,6 +175,18 @@ uint32
 Game::SizeY() const
 {
 	return fSizeY;
+}
+
+uint32
+Game::Score_Highest() const
+{
+	return fScore_Highest;
+}
+
+const char *
+Game::Username() const
+{
+	return fUsername;
 }
 
 void
@@ -272,6 +328,10 @@ Game::makeMove(GameMove direction)
 	*boardAt(placeX, placeY) = newTile();
 
 	fScore += scoreChange;
+	if(fScore > fScore_Highest){
+		fScore_Highest = fScore;
+		writeHighscore();
+	}
 
 	// Notify that the board has changed
 	// to redraw the board for example
@@ -284,6 +344,9 @@ Game::makeMove(GameMove direction)
 		BMessage ended(H2048_GAME_ENDED);
 		ended.AddInt32("finalScore", fScore);
 		broadcastMessage(ended);
+		BMessage request_name(H2048_REQUEST_NAME);
+		broadcastMessage(request_name);
+		writeHighscore();
 	}
 }
 
