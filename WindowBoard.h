@@ -11,6 +11,7 @@
 #include <Window.h>
 
 class Game;
+class BButton;
 class NumberView;
 class WindowBoard;
 class BStringView;
@@ -32,12 +33,17 @@ class GameWindow : public BWindow
 public:
 						GameWindow(WindowBoard *master);
 						~GameWindow();
-
+						
+			float 		prevWidth;
+			float 		prevHeight;
+			float 		defaultWidth;
+			float 		defaultHeight;
+			
 			bool		QuitRequested();
+			void		FrameResized(float width, float height);
 			void		MessageReceived(BMessage *message);
-
 private:
-			void		showBoard();
+			void		showBoard(bool canUndo);
 
 private:
 	NumberView **		fViews;
@@ -46,6 +52,10 @@ private:
 	BStringView *		fScore_Highest;
 	BTextControl*       fInputBox;
 	BGridLayout *		fBoard;
+
+	// we have to control the state of it
+	// (enabled / disabled)
+	BButton * 			undoButton;
 };
 
 
@@ -60,8 +70,8 @@ public:
 protected:
 			void		gameStarted();
 			void		gameEnded();
-			void		moveMade();
 			void		nameRequest();
+			void		boardChanged(bool canUndo);
 
 private:
 	bool				fSending;

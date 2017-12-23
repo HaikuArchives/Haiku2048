@@ -26,6 +26,10 @@ GameWindow::GameWindow(WindowBoard *master)
 	BButton *newGameButton = new BButton("newgame", "New Game",
 		new BMessage(H2048_NEW_GAME));
 
+	undoButton = new BButton("undomove", "Undo last move",
+		new BMessage(H2048_UNDO_MOVE));
+	undoButton->SetEnabled(false);
+
 	fScore = new BStringView("score", "Score: 0");
 	fScore_Highest = new BStringView("score_highest", "High Score: 0");
 
@@ -35,6 +39,7 @@ GameWindow::GameWindow(WindowBoard *master)
 		.SetInsets(B_USE_WINDOW_INSETS)
 		.AddGroup(B_HORIZONTAL)
 			.Add(newGameButton)
+			.Add(undoButton)
 			.Add(fScore)
 			.Add(fScore_Highest)
 			.End()
@@ -54,8 +59,12 @@ GameWindow::GameWindow(WindowBoard *master)
 			fBoard->AddView(num, x, y);
 		}
 	}
-
 	ResizeToPreferred();
+	BRect rect = Bounds();
+	prevWidth = rect.Width();
+	prevHeight = rect.Height();
+	defaultWidth = rect.Width();
+	defaultHeight = rect.Height();
 }
 
 GameWindow::~GameWindow()
@@ -83,16 +92,40 @@ GameWindow::MessageReceived(BMessage *message)
 			break;
 		}
 		case H2048_WINDOW_SHOW:
-			showBoard();
+		{
+			bool canUndo = false;
+			message->FindBool("canUndo", &canUndo);
+			showBoard(canUndo);
 			break;
+		}
+		case H2048_UNDO_MOVE:
+		{
+			if (!fMaster->fSending) {
+				// fMaster->fSending is false when:
+				// * The game hasn't started (unlikely, and the button is disabled anyway)
+				// * Game over
+				// In case of game over, we have to make it true, so that
+				// subsequent keypressed are acknowledged
+				fMaster->fSending = true;
+			}
+			
+			BMessenger game(NULL, fMaster->fTarget);
+			game.SendMessage(message);
+			break;
+		}
 		case B_KEY_DOWN:
 		{
 			const char *data;
 			ssize_t length;
-			if (fMaster->fSending && message->FindData("bytes", B_STRING_TYPE,
-				(const void **)&data, &length) == B_OK && data[0] >= 28
-				&& data[0] <= 31)
+			if (fMaster->fSending
+				&& message->FindData("bytes", B_STRING_TYPE, (const void **)&data, &length) == B_OK
+				&& (data[0] == 'u' || (data[0] >= 28 && data[0] <= 31)))
 			{
+				if (data[0] == 'u') {
+					PostMessage(H2048_UNDO_MOVE);
+					break;
+				}
+
 				GameMove m;
 
 				switch (data[0])
@@ -147,8 +180,10 @@ GameWindow::MessageReceived(BMessage *message)
 }
 
 void
-GameWindow::showBoard()
+GameWindow::showBoard(bool canUndo)
 {
+	undoButton->SetEnabled(canUndo);
+
 	Game *target = fMaster->fTarget;
 	uint32 sizeX = target->SizeX();
 	uint32 sizeY = target->SizeY();
@@ -172,6 +207,26 @@ GameWindow::showBoard()
 	fScore_Highest->SetText(score_highest.String());
 }
 
+void
+GameWindow::FrameResized(float width, 
+			 float height)
+{
+	// We don't want the user to scale the window so small that
+	// there's no space for the buttons.
+	if (width < defaultWidth) {
+		ResizeTo(defaultWidth, defaultHeight);
+		SetScale(1);
+	}
+	// Maintain the same width:height ratio
+	else {
+		float ratio = width/prevWidth;
+		SetScale(ratio);
+		prevWidth = width;
+		prevHeight = height;
+		ResizeTo(width, height*ratio);
+	}
+}
+
 WindowBoard::WindowBoard(Game *target)
 	:
 	GameBoard(target),
@@ -189,8 +244,12 @@ WindowBoard::~WindowBoard()
 void
 WindowBoard::gameStarted()
 {
+	BMessage redraw(H2048_WINDOW_SHOW);
+	redraw.AddBool("canUndo", false);
+
 	BMessenger messenger(NULL, fWindow);
-	messenger.SendMessage(H2048_WINDOW_SHOW);
+	messenger.SendMessage(&redraw);
+
 	fSending = true;
 }
 
@@ -202,10 +261,13 @@ WindowBoard::gameEnded()
 }
 
 void
-WindowBoard::moveMade()
+WindowBoard::boardChanged(bool canUndo)
 {
+	BMessage redraw(H2048_WINDOW_SHOW);
+	redraw.AddBool("canUndo", canUndo);
+
 	BMessenger messenger(NULL, fWindow);
-	messenger.SendMessage(H2048_WINDOW_SHOW);
+	messenger.SendMessage(&redraw);
 }
 
 void

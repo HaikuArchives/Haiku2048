@@ -33,8 +33,11 @@ GameBoard::MessageReceived(BMessage *message)
 		case H2048_GAME_ENDED:
 			gameEnded();
 			break;
-		case H2048_MOVE_MADE:
-			moveMade();
+		case H2048_BOARD_CHANGED:
+			bool canUndo;
+			message->FindBool("canUndo", &canUndo);
+
+			boardChanged(canUndo);
 			break;
 		case H2048_REQUEST_NAME:
 			nameRequest();
