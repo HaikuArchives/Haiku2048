@@ -35,7 +35,6 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	sprintf(fHighscore_path, "%s/%s", buffer, HIGHSCORE_DIRECTORY);
 	result = create_directory(fHighscore_path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	sprintf(fHighscore_path, "%s/%s", fHighscore_path, HIGHSCORE_FILENAME);
-	std::cout << fHighscore_path << std::endl;
 	
 	std::ifstream highscore(fHighscore_path, std::ios::binary);
 	memset(fUsername, 0, sizeof(char) * 32);
@@ -329,6 +328,8 @@ Game::makeMove(GameMove direction)
 
 	fScore += scoreChange;
 	if(fScore > fScore_Highest){
+		if(fUsername[0])
+			fUsername[0] = '\0';
 		fScore_Highest = fScore;
 		writeHighscore();
 	}
@@ -344,9 +345,11 @@ Game::makeMove(GameMove direction)
 		BMessage ended(H2048_GAME_ENDED);
 		ended.AddInt32("finalScore", fScore);
 		broadcastMessage(ended);
-		BMessage request_name(H2048_REQUEST_NAME);
-		broadcastMessage(request_name);
-		writeHighscore();
+		if(fScore >= fScore_Highest){
+			BMessage request_name(H2048_REQUEST_NAME);
+			broadcastMessage(request_name);
+			writeHighscore();
+		}
 	}
 }
 
