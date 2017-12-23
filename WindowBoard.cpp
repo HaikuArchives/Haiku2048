@@ -31,6 +31,7 @@ GameWindow::GameWindow(WindowBoard *master)
 	undoButton->SetEnabled(false);
 
 	fScore = new BStringView("score", "Score: 0");
+	fScore_Highest = new BStringView("score_highest", "High Score: 0");
 
 	fBoard = new BGridLayout();
 
@@ -40,6 +41,7 @@ GameWindow::GameWindow(WindowBoard *master)
 			.Add(newGameButton)
 			.Add(undoButton)
 			.Add(fScore)
+			.Add(fScore_Highest)
 			.End()
 		.Add(fBoard);
 
@@ -149,6 +151,28 @@ GameWindow::MessageReceived(BMessage *message)
 			BWindow::MessageReceived(message);
 			break;
 		}
+		case H2048_REQUEST_NAME:
+		{
+			BView *RequestBox = new BView(BRect(), "reqbox", B_FOLLOW_LEFT, B_WILL_DRAW);
+			RequestBox->SetViewColor(200,200,230);
+			AddChild(RequestBox);
+			fInputBox = new BTextControl(BRect(BPoint(0,0), BSize(200, 30)), "name", "Your name:", "", new BMessage(H2048_SET_NAME));
+			RequestBox->AddChild(fInputBox);
+			ResizeBy(0.0, 35.0);
+			fInputBox->MakeFocus();
+			break;
+		}
+		case H2048_SET_NAME:
+		{
+			BMessage req(H2048_NAME_REQUESTED);
+			req.AddString("playername", fInputBox->Text());
+			BMessenger messenger(NULL, fMaster->fTarget);
+			messenger.SendMessage(&req);
+			ResizeBy(0.0, -35.0);
+			RemoveChild(FindView("reqbox"));
+			delete fInputBox;
+			fInputBox = NULL;
+		}
 		default:
 			BWindow::MessageReceived(message);
 			break;
@@ -176,6 +200,11 @@ GameWindow::showBoard(bool canUndo)
 	BString score;
 	score << "Score: " << fMaster->fTarget->Score();
 	fScore->SetText(score.String());
+	BString score_highest;
+	score_highest << "High Score: " << fMaster->fTarget->Score_Highest();
+	if(fMaster->fTarget->Username()[0])
+		score_highest << " by " << fMaster->fTarget->Username();
+	fScore_Highest->SetText(score_highest.String());
 }
 
 void
@@ -186,12 +215,10 @@ GameWindow::FrameResized(float width,
 	// there's no space for the buttons.
 	if (width < defaultWidth) {
 		ResizeTo(defaultWidth, defaultHeight);
-		SetScale(1);
 	}
 	// Maintain the same width:height ratio
 	else {
 		float ratio = width/prevWidth;
-		SetScale(ratio);
 		prevWidth = width;
 		prevHeight = height;
 		ResizeTo(width, height*ratio);
@@ -240,3 +267,11 @@ WindowBoard::boardChanged(bool canUndo)
 	BMessenger messenger(NULL, fWindow);
 	messenger.SendMessage(&redraw);
 }
+
+void
+WindowBoard::nameRequest()
+{
+	BMessenger messenger(NULL, fWindow);
+	messenger.SendMessage(H2048_REQUEST_NAME);
+}
+	

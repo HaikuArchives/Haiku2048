@@ -16,6 +16,7 @@ enum
 {
 	H2048_GAME_STARTED		= '48GS',
 	H2048_GAME_ENDED		= '48GE',
+	H2048_REQUEST_NAME		= '48RN',
 	H2048_BOARD_CHANGED		= '48BC'
 };
 
@@ -30,6 +31,7 @@ protected:
 	// TODO: Pass the correct parameters and make a BMessage for them.
 	virtual	void		gameStarted() = 0;
 	virtual	void		gameEnded() = 0;
+	virtual void 		nameRequest() = 0;
 	virtual	void		boardChanged(bool canUndo) = 0;
 
 protected:

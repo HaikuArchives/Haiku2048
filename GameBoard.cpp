@@ -39,6 +39,8 @@ GameBoard::MessageReceived(BMessage *message)
 
 			boardChanged(canUndo);
 			break;
+		case H2048_REQUEST_NAME:
+			nameRequest();
 		default:
 			break;
 	}
