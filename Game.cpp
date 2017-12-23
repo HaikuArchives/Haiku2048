@@ -19,15 +19,19 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	fSizeY(sizeY),
 	fTargets(),
 	fInGame(false),
-	fScore(0)
+	fScore(0),
+	fCanUndo(false)
 {
 	fBoard = new uint32[fSizeX * fSizeY];
+	fPreviousBoard = new uint32[fSizeX * fSizeY];
+
 	Run();
 }
 
 Game::~Game()
 {
 	delete [] fBoard;
+	delete [] fPreviousBoard;
 }
 
 void
@@ -42,6 +46,9 @@ Game::MessageReceived(BMessage *message)
 			break;
 		case H2048_NEW_GAME:
 			newGame();
+			break;
+		case H2048_UNDO_MOVE:
+			undoMove();
 			break;
 		default:
 			break;
@@ -70,6 +77,7 @@ void
 Game::newGame()
 {
 	fScore = 0;
+	fCanUndo = false;
 
 	// Clear the board
 	for (uint32 x = 0; x < fSizeX; x++)
@@ -136,6 +144,12 @@ Game::makeMove(GameMove direction)
 	int32 moveS; // Reverse sliding direction
 	int32 *x; // Pointer to the direction that corresponds to the X axis
 	int32 *y; // Pointer to the direction that corresponds to the Y axis
+
+	// Save current board state before modifying it
+	// This allows user to undo
+	copyBoard(fBoard, fPreviousBoard);
+	fPreviousScore = fScore;
+	fCanUndo = true;
 
 	switch (direction)
 	{
@@ -259,9 +273,11 @@ Game::makeMove(GameMove direction)
 
 	fScore += scoreChange;
 
-	// Notify boards what happened
-	BMessage moved(H2048_MOVE_MADE);
-	broadcastMessage(moved);
+	// Notify that the board has changed
+	// to redraw the board for example
+	BMessage changed(H2048_BOARD_CHANGED);
+	changed.AddBool("canUndo", true);
+	broadcastMessage(changed);
 
 	if (gameOver())
 	{
@@ -331,4 +347,27 @@ Game::gameOver()
 		}
 	}
 	return true;
+}
+
+void
+Game::copyBoard(uint32 *from, uint32 *to) {
+	for (int32 x = 0; x < fSizeX; ++x) {
+		for (int32 y = 0; y < fSizeY; ++y) {
+			to[x * fSizeX + y] = from[x * fSizeX + y];
+		}
+	}
+}
+
+void
+Game::undoMove() {
+	if (!fCanUndo) return;
+
+	copyBoard(fPreviousBoard, fBoard);
+	fScore = fPreviousScore;
+	fCanUndo = false;
+
+	BMessage changed(H2048_BOARD_CHANGED);
+	// Now user can't undo anymore
+	changed.AddBool("canUndo", false);
+	broadcastMessage(changed);
 }

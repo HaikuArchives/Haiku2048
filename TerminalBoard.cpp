@@ -41,7 +41,7 @@ TerminalBoard::gameEnded()
 }
 
 void
-TerminalBoard::moveMade()
+TerminalBoard::boardChanged(bool canUndo)
 {
 	showBoard();
 }
@@ -66,12 +66,18 @@ control(void *data)
 	while (true)
 	{
 		int32 c = std::cin.get();
-		if (c != 'w' && c != 'a' && c != 's' && c != 'd')
+		if (c == 'w' || c == 'a' || c == 's' || c == 'd'){
+			BMessage move(H2048_MAKE_MOVE);
+			move.AddInt32("direction", c);
+			messenger.SendMessage(&move);
+		} else if (c == 'u') {
+			BMessage undo(H2048_UNDO_MOVE);
+			messenger.SendMessage(&undo);
+		} else {
 			continue;
+		}
+		
 		std::cout << std::endl;
-		BMessage move(H2048_MAKE_MOVE);
-		move.AddInt32("direction", c);
-		messenger.SendMessage(&move);
 	}
 }
 

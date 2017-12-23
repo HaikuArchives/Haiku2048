@@ -25,6 +25,7 @@ enum GameMove
 enum
 {
 	H2048_NEW_GAME		= '48NG',
+	H2048_UNDO_MOVE		= '48UM',
 	H2048_MAKE_MOVE		= '48MM'
 };
 
@@ -47,18 +48,29 @@ public:
 private:
 			void		newGame();
 			void		makeMove(GameMove direction);
+			void		undoMove();
+			void		copyBoard(uint32 *from, uint32 *to);
 			void		broadcastMessage(BMessage &msg);
 			uint32 *	boardAt(uint32 x, uint32 y);
 			uint32		newTile();
 			bool		gameOver();
 
 private:
-	std::vector<BMessenger *>		fTargets;
+	std::vector<BMessenger *>	fTargets;
 	// Use a one-dimensional array for the board to save some space.
-	uint32 *						fBoard;
-	uint32							fSizeX, fSizeY;
-	bool							fInGame;
-	uint32							fScore;
+	uint32 *					fBoard;
+
+	// Saves board state and score at previous move
+	uint32 *					fPreviousBoard;
+	uint32						fPreviousScore;
+	// fCanUndo is false when:
+	// * There is no previous state to undo (right after new game)
+	// * User has already undone (can only undo once)
+	bool						fCanUndo;
+
+	uint32						fSizeX, fSizeY;
+	bool						fInGame;
+	uint32						fScore;
 };
 
 #endif // GAME_H
