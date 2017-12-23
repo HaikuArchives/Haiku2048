@@ -28,9 +28,9 @@ enum GameMove
 enum
 {
 	H2048_NEW_GAME		= '48NG',
+	H2048_NAME_REQUESTED= '48NR',
 	H2048_UNDO_MOVE		= '48UM',
-	H2048_MAKE_MOVE		= '48MM',
-	H2048_NAME_REQUESTED= '48NR'
+	H2048_MAKE_MOVE		= '48MM'
 };
 
 class Game : public BLooper
@@ -79,10 +79,10 @@ private:
 	uint32						fSizeX, fSizeY;
 	bool						fInGame;
 	uint32						fScore;
-	uint32							fScore_Highest;
-	char							fUsername[32];
-	char							fPlayername[32];
-	char							fHighscore_path[128];
+	uint32						fScore_Highest;
+	char						fUsername[32];
+	char						fPlayername[32];
+	char						fHighscore_path[128];
 };
 
 #endif // GAME_H

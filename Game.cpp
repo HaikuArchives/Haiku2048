@@ -70,19 +70,20 @@ Game::MessageReceived(BMessage *message)
 		case H2048_NEW_GAME:
 			newGame();
 			break;
-		case H2048_UNDO_MOVE:
-			undoMove();
-			break;
 		case H2048_NAME_REQUESTED:
 		{
 			sprintf(fPlayername, "%s", (const char*)message->FindString("playername"));
 			memcpy(fUsername, fPlayername, sizeof(char) * 32);
-			BMessage changed(H2048_BOARD_CHANGED);
-			changed.AddBool("canUndo", false);
-			broadcastMessage(changed);
+      		// Update board
+      		BMessage changed(H2048_BOARD_CHANGED);
+	    	changed.AddBool("canUndo", false);
+	    	broadcastMessage(changed);
 			writeHighscore();
 			break;
 		}
+		case H2048_UNDO_MOVE:
+			undoMove();
+			break;
 		default:
 			break;
 	}
