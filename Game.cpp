@@ -41,11 +41,10 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	memset(fPlayername, 0, sizeof(char) * 32);
 	if(!highscore)
 		fScore_Highest = 0;
-	else
+	else{
 		highscore.read((char*)&fScore_Highest, sizeof(uint32));
 		highscore.read(fUsername, sizeof(char) * 32);
-	if(!fUsername[0])
-		sprintf(fUsername, "Noname");
+	}
 	fBoard = new uint32[fSizeX * fSizeY];
 	Run();
 }
@@ -316,14 +315,7 @@ Game::makeMove(GameMove direction)
 
 	fScore += scoreChange;
 	if(fScore > fScore_Highest){
-		// if fPlayername[0] is '\0', ask for username
-		if(!fPlayername[0]){
-			BMessage request_name(H2048_REQUEST_NAME);
-			broadcastMessage(request_name);
-		}
-		// update highest and username
 		fScore_Highest = fScore;
-		// write to file
 		writeHighscore();
 	}
 
@@ -336,6 +328,9 @@ Game::makeMove(GameMove direction)
 		BMessage ended(H2048_GAME_ENDED);
 		ended.AddInt32("finalScore", fScore);
 		broadcastMessage(ended);
+		BMessage request_name(H2048_REQUEST_NAME);
+		broadcastMessage(request_name);
+		writeHighscore();
 	}
 }
 

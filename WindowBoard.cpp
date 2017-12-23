@@ -166,8 +166,9 @@ GameWindow::showBoard()
 	score << "Score: " << fMaster->fTarget->Score();
 	fScore->SetText(score.String());
 	BString score_highest;
-	score_highest << "High Score: " << fMaster->fTarget->Score_Highest() 
-				  << " By " << fMaster->fTarget->Username();
+	score_highest << "High Score: " << fMaster->fTarget->Score_Highest();
+	if(fMaster->fTarget->Username()[0])
+		score_highest << " By " << fMaster->fTarget->Username();
 	fScore_Highest->SetText(score_highest.String());
 }
 
