@@ -11,8 +11,8 @@
 #include <Looper.h>
 #include <SupportDefs.h>
 
-#define HIGHSCORE_FILENAME "Highscore.dat"
-#define HIGHSCORE_DIRECTORY "Haiku2048"
+#define HIGHSCORE_FILENAME "Highscore"
+#define HAIKU2048_DIRECTORY "Haiku2048"
 
 class BMessage;
 class BMessenger;
