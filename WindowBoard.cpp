@@ -45,11 +45,10 @@ GameWindow::GameWindow(WindowBoard *master)
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_INSETS)
-		.AddGroup(B_HORIZONTAL) 
-			.Add(newGameButton) 
+		.AddGroup(B_HORIZONTAL)
+			.Add(newGameButton)
 			.Add(undoButton)
-			.AddStrut(1)
-			.AddStrut(1)
+			.AddStrut(5)
 			.AddGroup(B_VERTICAL, -15)
 				.Add(fHighscoreName)
 				.AddGroup(B_HORIZONTAL)
@@ -229,12 +228,13 @@ GameWindow::showBoard(bool canUndo)
 
 	BString highscore_name;
 	highscore_name << "Highscore";
-	if(fMaster->fTarget->Username()[0]) {
+	if(fMaster->fTarget->Username()[0]) 
+	{
 		highscore_name << " by " << fMaster->fTarget->Username();	
 	}
 	highscore_name << ":";
 	fHighscoreName->SetText(highscore_name.String());
-		
+
 	BString score_highest;
 	score_highest << fMaster->fTarget->Score_Highest();
 	fScore_Highest->SetText(score_highest.String());
@@ -315,4 +315,3 @@ WindowBoard::nameRequest()
 	BMessenger messenger(NULL, fWindow);
 	messenger.SendMessage(H2048_REQUEST_NAME);
 }
-	
