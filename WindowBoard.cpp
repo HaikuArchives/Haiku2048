@@ -22,28 +22,42 @@ GameWindow::GameWindow(WindowBoard *master)
 	:
 	BWindow(BRect(100, 100, 500, 400), "Haiku2048", B_TITLED_WINDOW, 0),
 	fMaster(master)
-{
-	BButton *newGameButton = new BButton("newgame", "New Game",
-		new BMessage(H2048_NEW_GAME));
+{	
+	fIconNew  = BTranslationUtils::GetBitmap('PNG ', "icon_new.png");
+	fIconUndo = BTranslationUtils::GetBitmap('PNG ', "icon_undo.png");
 
-	undoButton = new BButton("undomove", "Undo last move",
+	BButton *newGameButton = new BButton("newgame", "",
+		new BMessage(H2048_NEW_GAME));
+	newGameButton->SetIcon(fIconNew);
+	undoButton = new BButton("undomove", "",
 		new BMessage(H2048_UNDO_MOVE));
+	undoButton->SetIcon(fIconUndo);
 	undoButton->SetEnabled(false);
 
-	fScore = new BStringView("score", "Score: 0");
 	fScore_Highest = new BStringView("score_highest", "High Score: 0");
+	fScore = new BStringView("score", "Score: 0");
+	fHighscoreName = new BStringView("highscore_name","");
 
 	fBoard = new BGridLayout();
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_INSETS)
-		.AddGroup(B_HORIZONTAL)
-			.Add(newGameButton)
+		.AddGroup(B_HORIZONTAL) 
+			.Add(newGameButton) 
 			.Add(undoButton)
+			.AddStrut(3)
+			.AddGroup(B_VERTICAL, -15)
+				.Add(fHighscoreName)
+				.AddGroup(B_HORIZONTAL)
+					.AddGlue()
+					.Add(fScore_Highest)
+					.End()
+				.End()
+			.AddGlue()
 			.Add(fScore)
-			.Add(fScore_Highest)
 			.End()
 		.Add(fBoard);
+
 
 	uint32 sizeX = fMaster->fTarget->SizeX();
 	uint32 sizeY = fMaster->fTarget->SizeY();
@@ -61,7 +75,8 @@ GameWindow::GameWindow(WindowBoard *master)
 	}
 	ResizeToPreferred();
 	BRect rect = Bounds();
-	prevWidth = rect.Width();
+	prevWidth = rect.Width() - 15; 	// due to changes in font size, some of the boxes at 
+									// the bottom would be concealed. This is to expand window size.
 	prevHeight = rect.Height();
 	defaultWidth = rect.Width();
 	defaultHeight = rect.Height();
@@ -197,14 +212,25 @@ GameWindow::showBoard(bool canUndo)
 		}
 	}
 
-	BString score;
-	score << "Score: " << fMaster->fTarget->Score();
-	fScore->SetText(score.String());
+	BString highscore_name;
+	highscore_name << "Highscore";
+	if(fMaster->fTarget->Username()[0]) {
+		highscore_name << " by " << fMaster->fTarget->Username();	
+	}
+	highscore_name << ":";
+	fHighscoreName->SetText(highscore_name.String());
+		
 	BString score_highest;
-	score_highest << "High Score: " << fMaster->fTarget->Score_Highest();
-	if(fMaster->fTarget->Username()[0])
-		score_highest << " by " << fMaster->fTarget->Username();
+	score_highest << fMaster->fTarget->Score_Highest();
 	fScore_Highest->SetText(score_highest.String());
+	fScore_Highest->SetFont(be_bold_font);
+	fScore_Highest->SetFontSize(15);
+
+	BString score;
+	score << fMaster->fTarget->Score();
+	fScore->SetText(score.String());
+	fScore->SetFont(be_bold_font);
+	fScore->SetFontSize(35);
 }
 
 void

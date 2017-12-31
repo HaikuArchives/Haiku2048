@@ -19,7 +19,8 @@ resource app_version {
 	short_info = "",
 	long_info = ""
 };
-
+resource(1, "icon_new.png")		#'PNG ' import "icon_new.png";
+resource(2, "icon_undo.png")	#'PNG ' import "icon_undo.png";
 resource file_types message;
 
 resource vector_icon array {
