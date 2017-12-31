@@ -17,6 +17,7 @@
 #include <Rect.h>
 #include <String.h>
 #include <StringView.h>
+#include <TranslationUtils.h>
 
 GameWindow::GameWindow(WindowBoard *master)
 	:
