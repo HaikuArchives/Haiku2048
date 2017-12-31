@@ -230,7 +230,7 @@ GameWindow::showBoard(bool canUndo)
 	highscore_name << "Highscore";
 	if(fMaster->fTarget->Username()[0]) 
 	{
-		highscore_name << " by " << fMaster->fTarget->Username();	
+		highscore_name << " by " << fMaster->fTarget->Username();
 	}
 	highscore_name << ":";
 	fHighscoreName->SetText(highscore_name.String());
