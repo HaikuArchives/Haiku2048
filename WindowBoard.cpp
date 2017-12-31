@@ -76,7 +76,7 @@ GameWindow::GameWindow(WindowBoard *master)
 	}
 	ResizeToPreferred();
 	BRect rect = Bounds();
-	prevWidth = rect.Width() - 15; 	// due to changes in font size, some of the boxes at 
+	prevWidth = rect.Width() - 20; 	// due to changes in font size, some of the boxes at 
 									// the bottom would be concealed. This is to expand window size.
 	prevHeight = rect.Height();
 	defaultWidth = rect.Width();
