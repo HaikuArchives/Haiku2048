@@ -17,16 +17,18 @@
 #include <Rect.h>
 #include <String.h>
 #include <StringView.h>
-#include <TranslationUtils.h>
+#include <IconUtils.h>
+#include <Resources.h>
+
 
 GameWindow::GameWindow(WindowBoard *master)
 	:
 	BWindow(BRect(100, 100, 500, 400), "Haiku2048", B_TITLED_WINDOW, 0),
 	fMaster(master)
 {	
-	fIconNew  = BTranslationUtils::GetBitmap('PNG ', "icon_new.png");
-	fIconUndo = BTranslationUtils::GetBitmap('PNG ', "icon_undo.png");
-
+	fIconUndo = initIcon("icon_undo.hvif");
+	fIconNew = initIcon("icon_new.hvif");
+	
 	BButton *newGameButton = new BButton("newgame", "",
 		new BMessage(H2048_NEW_GAME));
 	newGameButton->SetIcon(fIconNew);
@@ -82,6 +84,17 @@ GameWindow::GameWindow(WindowBoard *master)
 	prevHeight = rect.Height();
 	defaultWidth = rect.Width();
 	defaultHeight = rect.Height();
+}
+
+BBitmap*
+GameWindow::initIcon(const char* iconName) {
+	BBitmap* icon = NULL;
+	BResources* resources = BApplication::AppResources();
+	size_t size;
+	const void* rawIcon = resources->LoadResource('VICN', iconName, &size);
+	icon = new BBitmap(BRect(0, 0, 31, 31), B_RGBA32);
+	BIconUtils::GetVectorIcon((const uint8*)rawIcon, size, icon);
+	return icon;
 }
 
 GameWindow::~GameWindow()

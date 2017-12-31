@@ -44,6 +44,7 @@ public:
 			void		MessageReceived(BMessage *message);
 private:
 			void		showBoard(bool canUndo);
+			BBitmap*	initIcon(const char* iconName);
 
 private:
 	NumberView **		fViews;
