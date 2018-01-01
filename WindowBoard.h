@@ -9,7 +9,7 @@
 #include "GameBoard.h"
 
 #include <Window.h>
-
+#include <Bitmap.h>
 class Game;
 class BButton;
 class NumberView;
@@ -44,14 +44,18 @@ public:
 			void		MessageReceived(BMessage *message);
 private:
 			void		showBoard(bool canUndo);
+			BBitmap*	initIcon(const char* iconName);
 
 private:
 	NumberView **		fViews;
 	WindowBoard *		fMaster;
 	BStringView *		fScore;
 	BStringView *		fScore_Highest;
+	BStringView *		fHighscoreName;
 	BTextControl*       fInputBox;
 	BGridLayout *		fBoard;
+	BBitmap *			fIconNew;
+	BBitmap * 			fIconUndo;
 
 	// we have to control the state of it
 	// (enabled / disabled)
