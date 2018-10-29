@@ -17,7 +17,7 @@ You should see another square labeled `2` after you made a move. Try putting the
 Your goal is to combine these squares until you get the ultimate sum of 2048.
 
 ### Made a wrong move?
-No problem! Simply press the green arrow at the top left corner of the window to take back a move.
+No problem! Simply press the green arrow at the top of the window to take back a move.
 
 ### Frustrated and want to start over?
 Simply press the button with the 2048 icon at the top of the window to restart your game!
