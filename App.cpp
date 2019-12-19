@@ -9,7 +9,6 @@
 #include <Messenger.h>
 #include "WindowBoard.h"
 #include "Game.h"
-#include "TerminalBoard.h"
 
 class App : public BApplication
 {
@@ -22,7 +21,6 @@ App::App()
 	BApplication("application/x-vnd.Haiku-Haiku2048")
 {
 	Game *theGame = new Game(4, 4);
-	TerminalBoard *board = new TerminalBoard(theGame);
 	WindowBoard *win = new WindowBoard(theGame);
 	BMessenger gameMsg(NULL, theGame);
 	gameMsg.SendMessage(H2048_NEW_GAME);
