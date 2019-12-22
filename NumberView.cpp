@@ -8,6 +8,13 @@
 #include <String.h>
 #include <iostream>
 
+float squareSize = 100;
+
+void ScaleBy (float scale)
+{
+	squareSize *= scale;
+}
+
 NumberView::NumberView(uint32 number)
 	:
 	BView("noname", B_WILL_DRAW),

@@ -15,8 +15,9 @@ class NumberView : public BView
 public:
 						NumberView(uint32 number);
 						~NumberView();
-			float		squareSize = 100;
+
 			void		SetNumber(uint32 number);
+			void		ScaleBy (float scale);
 			void		UpdateTiles();
 
 			void		Draw(BRect r);

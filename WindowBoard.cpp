@@ -256,26 +256,23 @@ GameWindow::FrameResized(float width,
 	// there's no space for the buttons.
 	if (width < defaultWidth) {
 		ResizeTo(defaultWidth, defaultHeight);
+		width=defaultWidth;
 	}
 	// Maintain the same width:height ratio
 	else {
 		float ratio = width/prevWidth;
-		prevWidth = width;
-		prevHeight = height;
+
 		ResizeTo(width, height*ratio);
 
-		//Calculate squareSize
-		float squareSize = 100*width/defaultWidth;
-
-		//Set size for every square
-		Game *target = fMaster->fTarget;
-		uint32 sizeX = target->SizeX();
-		uint32 sizeY = target->SizeY();
-
-		for(int i =0;i<sizeX*sizeY;i++){
-			fViews[i]->squareSize = squareSize;
-		}
 	}
+
+	//Don't scale on first resize
+	if(prevWidth >= defaultWidth){
+		ScaleBy(width/prevWidth);
+	}
+
+	prevWidth = width;
+	prevHeight = height;
 }
 
 WindowBoard::WindowBoard(Game *target)
