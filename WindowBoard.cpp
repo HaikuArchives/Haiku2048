@@ -263,6 +263,18 @@ GameWindow::FrameResized(float width,
 		prevWidth = width;
 		prevHeight = height;
 		ResizeTo(width, height*ratio);
+
+		//Calculate squareSize
+		float squareSize = 100*width/defaultWidth;
+
+		//Set size for every square
+		Game *target = fMaster->fTarget;
+		uint32 sizeX = target->SizeX();
+		uint32 sizeY = target->SizeY();
+
+		for(int i =0;i<sizeX*sizeY;i++){
+			fViews[i]->squareSize = squareSize;
+		}
 	}
 }
 
