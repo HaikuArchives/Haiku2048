@@ -5,6 +5,7 @@
 
 #include "Game.h"
 #include "GameBoard.h"
+#include "WindowBoard.h"
 
 #include <algorithm>
 #include <cstdlib>
@@ -78,8 +79,12 @@ Game::MessageReceived(BMessage *message)
 				}
 			break;
 		case H2048_SAVE_GAME:
-			save();
+		{
+			BRect frame;
+			message->FindRect("frame",&frame);
+			save(frame);
 			break;
+		}
 		case H2048_NAME_REQUESTED:
 		{
 			sprintf(fPlayername, "%s", (const char*)message->FindString("playername"));
@@ -450,14 +455,18 @@ Game::undoMove() {
 }
 
 void
-Game::save(){
+Game::save(BRect frame){
 	std::ofstream saveFile(fSaveFile_path, std::ios_base::trunc| std::ios_base::binary);
 	if(saveFile.good()){
 		saveFile.write((char*)fBoard,sizeof(uint32_t)*fSizeX*fSizeY);
 		saveFile.write((char*)fPreviousBoard,sizeof(uint32_t)*fSizeX*fSizeY);
+
 		saveFile.write((char*)&fScore,sizeof(uint32_t));
 		saveFile.write((char*)&fPreviousScore,sizeof(uint32_t));
+
 		saveFile.write((char*)&fCanUndo,sizeof(bool));
+
+		saveFile.write((char*)&frame,sizeof(BRect));
 		saveFile.close();
 	}
 	}
@@ -467,10 +476,20 @@ Game::load(){
 	if(saveFile.good()){
 		saveFile.read((char*)fBoard,sizeof(uint32_t)*fSizeX*fSizeY);
 		saveFile.read((char*)fPreviousBoard,sizeof(uint32_t)*fSizeX*fSizeY);
+
 		saveFile.read((char*)&fScore,sizeof(uint32_t));
 		saveFile.read((char*)&fPreviousScore,sizeof(uint32_t));
+
 		saveFile.read((char*)&fCanUndo,sizeof(bool));
+
+		BRect frame;
+		saveFile.read((char*)&frame,sizeof(BRect));
+
 		saveFile.close();
+
+		BMessage setFrameMessage(H2048_SET_FRAME);
+		setFrameMessage.AddRect("frame",frame);
+		broadcastMessage(setFrameMessage);
 
 		BMessage startNotification(H2048_GAME_STARTED);
 		broadcastMessage(startNotification);
