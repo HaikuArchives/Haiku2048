@@ -32,7 +32,8 @@ enum
 	H2048_NAME_REQUESTED= '48NR',
 	H2048_UNDO_MOVE		= '48UM',
 	H2048_MAKE_MOVE		= '48MM',
-	H2048_LOAD_GAME		= '48LG'
+	H2048_LOAD_GAME		= '48LG',
+	H2048_SAVE_GAME		= '48SG'
 };
 
 class Game : public BLooper

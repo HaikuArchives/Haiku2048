@@ -71,12 +71,14 @@ Game::MessageReceived(BMessage *message)
 			break;
 		case H2048_NEW_GAME:
 			newGame();
-			save();
 			break;
 		case H2048_LOAD_GAME:
 			if(!load()){
 				newGame();
 				}
+			break;
+		case H2048_SAVE_GAME:
+			save();
 			break;
 		case H2048_NAME_REQUESTED:
 		{
@@ -359,9 +361,7 @@ Game::makeMove(GameMove direction)
 			broadcastMessage(request_name);
 			writeHighscore();
 		}
-	} else {
-		save();
-		}
+	}
 }
 
 void
@@ -447,7 +447,6 @@ Game::undoMove() {
 	// Now user can't undo anymore
 	changed.AddBool("canUndo", false);
 	broadcastMessage(changed);
-	save();
 }
 
 void

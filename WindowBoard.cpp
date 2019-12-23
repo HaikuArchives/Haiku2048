@@ -105,6 +105,8 @@ GameWindow::~GameWindow()
 bool
 GameWindow::QuitRequested()
 {
+	BMessenger game(NULL, fMaster->fTarget);
+	game.SendMessage(H2048_SAVE_GAME);
 	be_app_messenger.SendMessage(B_QUIT_REQUESTED);
 	return true;
 }
