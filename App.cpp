@@ -23,7 +23,7 @@ App::App()
 	Game *theGame = new Game(4, 4);
 	WindowBoard *win = new WindowBoard(theGame);
 	BMessenger gameMsg(NULL, theGame);
-	gameMsg.SendMessage(H2048_NEW_GAME);
+	gameMsg.SendMessage(H2048_LOAD_GAME);
 }
 
 int main()

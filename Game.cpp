@@ -35,7 +35,10 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	sprintf(fHighscore_path, "%s/%s", buffer, HAIKU2048_DIRECTORY);
 	result = create_directory(fHighscore_path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	sprintf(fHighscore_path, "%s/%s", fHighscore_path, HIGHSCORE_FILENAME);
-	
+
+	sprintf(fSaveFile_path, "%s/%s", buffer, HAIKU2048_DIRECTORY);
+	sprintf(fSaveFile_path, "%s/%s", fSaveFile_path, SAVEFILE_FILENAME);
+
 	std::ifstream highscore(fHighscore_path, std::ios::binary);
 	memset(fUsername, 0, sizeof(char) * 32);
 	memset(fPlayername, 0, sizeof(char) * 32);
@@ -47,7 +50,6 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	}
 	fBoard = new uint32[fSizeX * fSizeY];
 	fPreviousBoard = new uint32[fSizeX * fSizeY];
-
 	Run();
 }
 
@@ -69,6 +71,12 @@ Game::MessageReceived(BMessage *message)
 			break;
 		case H2048_NEW_GAME:
 			newGame();
+			save();
+			break;
+		case H2048_LOAD_GAME:
+			if(!load()){
+				newGame();
+				}
 			break;
 		case H2048_NAME_REQUESTED:
 		{
@@ -351,7 +359,9 @@ Game::makeMove(GameMove direction)
 			broadcastMessage(request_name);
 			writeHighscore();
 		}
-	}
+	} else {
+		save();
+		}
 }
 
 void
@@ -437,4 +447,43 @@ Game::undoMove() {
 	// Now user can't undo anymore
 	changed.AddBool("canUndo", false);
 	broadcastMessage(changed);
+	save();
 }
+
+void
+Game::save(){
+	std::ofstream saveFile(fSaveFile_path, std::ios_base::trunc| std::ios_base::binary);
+	if(saveFile.good()){
+		saveFile.write((char*)fBoard,sizeof(uint32_t)*fSizeX*fSizeY);
+		saveFile.write((char*)fPreviousBoard,sizeof(uint32_t)*fSizeX*fSizeY);
+		saveFile.write((char*)&fScore,sizeof(uint32_t));
+		saveFile.write((char*)&fPreviousScore,sizeof(uint32_t));
+		saveFile.write((char*)&fCanUndo,sizeof(bool));
+		saveFile.close();
+	}
+	}
+bool
+Game::load(){
+	std::ifstream saveFile(fSaveFile_path, std::ios::binary);
+	if(saveFile.good()){
+		saveFile.read((char*)fBoard,sizeof(uint32_t)*fSizeX*fSizeY);
+		saveFile.read((char*)fPreviousBoard,sizeof(uint32_t)*fSizeX*fSizeY);
+		saveFile.read((char*)&fScore,sizeof(uint32_t));
+		saveFile.read((char*)&fPreviousScore,sizeof(uint32_t));
+		saveFile.read((char*)&fCanUndo,sizeof(bool));
+		saveFile.close();
+
+		BMessage startNotification(H2048_GAME_STARTED);
+		broadcastMessage(startNotification);
+
+		//Notify the boards about fCanUndo state
+		BMessage changed(H2048_BOARD_CHANGED);
+		changed.AddBool("canUndo", fCanUndo);
+		broadcastMessage(changed);
+
+		fInGame = true;
+		return true;
+	} else {
+		return false;
+	}
+	}
