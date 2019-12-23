@@ -456,52 +456,61 @@ Game::undoMove() {
 
 void
 Game::save(BRect frame){
-	std::ofstream saveFile(fSaveFile_path, std::ios_base::trunc| std::ios_base::binary);
-	if(saveFile.good()){
-		saveFile.write((char*)fBoard,sizeof(uint32_t)*fSizeX*fSizeY);
-		saveFile.write((char*)fPreviousBoard,sizeof(uint32_t)*fSizeX*fSizeY);
+	BFile saveFile(fSaveFile_path,B_WRITE_ONLY | B_CREATE_FILE);
 
-		saveFile.write((char*)&fScore,sizeof(uint32_t));
-		saveFile.write((char*)&fPreviousScore,sizeof(uint32_t));
+	BMessage saveMessage(H2048_SAVE_MESSAGE);
 
-		saveFile.write((char*)&fCanUndo,sizeof(bool));
+	saveMessage.AddData("board",B_INT32_TYPE,fBoard,sizeof(uint32_t)*fSizeX*fSizeY,false);
+	saveMessage.AddData("previousBoard",B_INT32_TYPE,fPreviousBoard,sizeof(uint32_t)*fSizeX*fSizeY);
 
-		saveFile.write((char*)&frame,sizeof(BRect));
-		saveFile.close();
-	}
+	saveMessage.AddUInt32("score",fScore);
+	saveMessage.AddUInt32("previousScore",fPreviousScore);
+
+	saveMessage.AddBool("canUndo",fCanUndo);
+	saveMessage.AddRect("windowFrame",frame);
+
+	status_t result = saveMessage.Flatten(&saveFile);
 	}
 bool
 Game::load(){
-	std::ifstream saveFile(fSaveFile_path, std::ios::binary);
-	if(saveFile.good()){
-		saveFile.read((char*)fBoard,sizeof(uint32_t)*fSizeX*fSizeY);
-		saveFile.read((char*)fPreviousBoard,sizeof(uint32_t)*fSizeX*fSizeY);
+	BFile saveFile(fSaveFile_path,B_READ_ONLY);
 
-		saveFile.read((char*)&fScore,sizeof(uint32_t));
-		saveFile.read((char*)&fPreviousScore,sizeof(uint32_t));
-
-		saveFile.read((char*)&fCanUndo,sizeof(bool));
-
-		BRect frame;
-		saveFile.read((char*)&frame,sizeof(BRect));
-
-		saveFile.close();
-
-		BMessage setFrameMessage(H2048_SET_FRAME);
-		setFrameMessage.AddRect("frame",frame);
-		broadcastMessage(setFrameMessage);
-
-		BMessage startNotification(H2048_GAME_STARTED);
-		broadcastMessage(startNotification);
-
-		//Notify the boards about fCanUndo state
-		BMessage changed(H2048_BOARD_CHANGED);
-		changed.AddBool("canUndo", fCanUndo);
-		broadcastMessage(changed);
-
-		fInGame = true;
-		return true;
-	} else {
+	BMessage saveMessage(H2048_SAVE_MESSAGE);
+	status_t result = saveMessage.Unflatten(&saveFile);
+	if(result!= B_OK){
 		return false;
 	}
+
+	bool loadOK = true;
+	const void * tempPtr;
+
+	loadOK = loadOK && saveMessage.FindData("board",B_ANY_TYPE,0,&tempPtr,NULL) == B_OK;
+	memcpy(fBoard,tempPtr,sizeof(uint32_t)*fSizeX*fSizeY);
+
+	loadOK = loadOK && saveMessage.FindData("previousBoard",B_ANY_TYPE,0,&tempPtr,NULL) == B_OK;
+	memcpy(fPreviousBoard,tempPtr,sizeof(uint32_t)*fSizeX*fSizeY);
+
+	loadOK = loadOK && saveMessage.FindUInt32("score",&fScore) == B_OK;
+	loadOK = loadOK && saveMessage.FindUInt32("previousScore",&fPreviousScore) == B_OK;
+	loadOK = loadOK && saveMessage.FindBool("canUndo",&fCanUndo) == B_OK;
+
+	BRect frame;
+	loadOK = loadOK && saveMessage.FindRect("windowFrame",&frame) == B_OK;
+
+	if(!loadOK) return false;
+
+	BMessage setFrameMessage(H2048_SET_FRAME);
+	setFrameMessage.AddRect("frame",frame);
+	broadcastMessage(setFrameMessage);
+
+	BMessage startNotification(H2048_GAME_STARTED);
+	broadcastMessage(startNotification);
+
+	//Notify the boards about fCanUndo state
+	BMessage changed(H2048_BOARD_CHANGED);
+	changed.AddBool("canUndo", fCanUndo);
+	broadcastMessage(changed);
+
+	fInGame = true;
+	return true;
 	}
