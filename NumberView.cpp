@@ -13,7 +13,6 @@ float squareSize = 100;
 void ScaleBy (float scale)
 {
 	squareSize *= scale;
-	// UpdateTiles();
 }
 
 NumberView::NumberView(uint32 number)

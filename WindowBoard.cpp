@@ -256,14 +256,23 @@ GameWindow::FrameResized(float width,
 	// there's no space for the buttons.
 	if (width < defaultWidth) {
 		ResizeTo(defaultWidth, defaultHeight);
+		width=defaultWidth;
 	}
 	// Maintain the same width:height ratio
 	else {
 		float ratio = width/prevWidth;
-		prevWidth = width;
-		prevHeight = height;
+
 		ResizeTo(width, height*ratio);
+
 	}
+
+	//Don't scale on first resize
+	if(prevWidth >= defaultWidth){
+		ScaleBy(width/prevWidth);
+	}
+
+	prevWidth = width;
+	prevHeight = height;
 }
 
 WindowBoard::WindowBoard(Game *target)
