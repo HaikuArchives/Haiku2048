@@ -454,14 +454,16 @@ Game::undoMove() {
 	broadcastMessage(changed);
 }
 
-void
+status_t
 Game::save(BRect frame){
 	BFile saveFile(fSaveFile_path,B_WRITE_ONLY | B_CREATE_FILE);
 
 	BMessage saveMessage(H2048_SAVE_MESSAGE);
 
-	saveMessage.AddData("board",B_INT32_TYPE,fBoard,sizeof(uint32_t)*fSizeX*fSizeY,false);
-	saveMessage.AddData("previousBoard",B_INT32_TYPE,fPreviousBoard,sizeof(uint32_t)*fSizeX*fSizeY);
+	for(int i =0;i<fSizeX*fSizeY;i++){
+		saveMessage.AddUInt32("board",fBoard[i]);
+		saveMessage.AddUInt32("previousBoard", fPreviousBoard[i]);
+		}
 
 	saveMessage.AddUInt32("score",fScore);
 	saveMessage.AddUInt32("previousScore",fPreviousScore);
@@ -469,7 +471,7 @@ Game::save(BRect frame){
 	saveMessage.AddBool("canUndo",fCanUndo);
 	saveMessage.AddRect("windowFrame",frame);
 
-	status_t result = saveMessage.Flatten(&saveFile);
+	return saveMessage.Flatten(&saveFile);
 	}
 bool
 Game::load(){
@@ -482,13 +484,11 @@ Game::load(){
 	}
 
 	bool loadOK = true;
-	const void * tempPtr;
 
-	loadOK = loadOK && saveMessage.FindData("board",B_ANY_TYPE,0,&tempPtr,NULL) == B_OK;
-	memcpy(fBoard,tempPtr,sizeof(uint32_t)*fSizeX*fSizeY);
-
-	loadOK = loadOK && saveMessage.FindData("previousBoard",B_ANY_TYPE,0,&tempPtr,NULL) == B_OK;
-	memcpy(fPreviousBoard,tempPtr,sizeof(uint32_t)*fSizeX*fSizeY);
+	for(int i =0;i<fSizeX*fSizeY;i++){
+		loadOK = loadOK && saveMessage.FindUInt32("board",i,&fBoard[i]) == B_OK;
+		loadOK = loadOK && saveMessage.FindUInt32("previousBoard",i, &fPreviousBoard[i]) == B_OK;
+		}
 
 	loadOK = loadOK && saveMessage.FindUInt32("score",&fScore) == B_OK;
 	loadOK = loadOK && saveMessage.FindUInt32("previousScore",&fPreviousScore) == B_OK;

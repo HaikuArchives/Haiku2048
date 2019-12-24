@@ -61,7 +61,7 @@ private:
 			void		undoMove();
 			void		copyBoard(uint32 *from, uint32 *to);
 			void		broadcastMessage(BMessage &msg);
-			void		save(BRect frame);
+			status_t	save(BRect frame);
 			bool		load();
 			uint32 *	boardAt(uint32 x, uint32 y);
 			uint32		newTile();
