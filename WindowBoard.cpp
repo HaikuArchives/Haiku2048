@@ -12,6 +12,7 @@
 #include <Application.h>
 #include <Box.h>
 #include <Button.h>
+#include <Catalog.h>
 #include <LayoutBuilder.h>
 #include <Messenger.h>
 #include <Rect.h>
@@ -20,10 +21,12 @@
 #include <IconUtils.h>
 #include <Resources.h>
 
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "WindowBoard"
 
 GameWindow::GameWindow(WindowBoard *master)
 	:
-	BWindow(BRect(100, 100, 500, 400), "Haiku2048", B_TITLED_WINDOW, 0),
+	BWindow(BRect(100, 100, 500, 400), B_TRANSLATE_SYSTEM_NAME("Haiku2048"), B_TITLED_WINDOW, 0),
 	fMaster(master)
 {	
 	fIconUndo = initIcon("icon_undo.hvif");
@@ -37,8 +40,8 @@ GameWindow::GameWindow(WindowBoard *master)
 	undoButton->SetIcon(fIconUndo);
 	undoButton->SetEnabled(false);
 
-	fScore_Highest = new BStringView("score_highest", "High Score: 0");
-	fScore = new BStringView("score", "Score: 0");
+	fScore_Highest = new BStringView("score_highest", B_TRANSLATE("High Score: 0"));
+	fScore = new BStringView("score", B_TRANSLATE("Score: 0"));
 	fHighscoreName = new BStringView("highscore_name","");
 
 	fBoard = new BGridLayout();
@@ -185,7 +188,7 @@ GameWindow::MessageReceived(BMessage *message)
 			BView *RequestBox = new BView(BRect(), "reqbox", B_FOLLOW_LEFT, B_WILL_DRAW);
 			RequestBox->SetViewColor(200,200,230);
 			AddChild(RequestBox);
-			fInputBox = new BTextControl(BRect(BPoint(0,0), BSize(200, 30)), "name", "Your name:", "", new BMessage(H2048_SET_NAME));
+			fInputBox = new BTextControl(BRect(BPoint(0,0), BSize(200, 30)), "name", B_TRANSLATE("Your name:"), "", new BMessage(H2048_SET_NAME));
 			RequestBox->AddChild(fInputBox);
 			ResizeBy(0.0, 35.0);
 			fInputBox->MakeFocus();
@@ -227,10 +230,10 @@ GameWindow::showBoard(bool canUndo)
 	}
 
 	BString highscore_name;
-	highscore_name << "Highscore";
+	highscore_name << B_TRANSLATE("Highscore");
 	if(fMaster->fTarget->Username()[0]) 
 	{
-		highscore_name << " by " << fMaster->fTarget->Username();
+		highscore_name << B_TRANSLATE(" by ") << fMaster->fTarget->Username();
 	}
 	highscore_name << ":";
 	fHighscoreName->SetText(highscore_name.String());
@@ -305,7 +308,7 @@ void
 WindowBoard::gameEnded()
 {
 	fSending = false;
-	(new BAlert("Title", "Game Ended", "OK"))->Go();
+	(new BAlert(B_TRANSLATE("Title"), B_TRANSLATE("Game Ended"), B_TRANSLATE("OK")))->Go();
 }
 
 void
