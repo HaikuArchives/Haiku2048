@@ -40,7 +40,7 @@ GameWindow::GameWindow(WindowBoard *master)
 	undoButton->SetIcon(fIconUndo);
 	undoButton->SetEnabled(false);
 
-	fScore_Highest = new BStringView("score_highest", B_TRANSLATE("High Score: 0"));
+	fScore_Highest = new BStringView("score_highest", B_TRANSLATE("High-score: 0"));
 	fScore = new BStringView("score", B_TRANSLATE("Score: 0"));
 	fHighscoreName = new BStringView("highscore_name","");
 
@@ -188,7 +188,8 @@ GameWindow::MessageReceived(BMessage *message)
 			BView *RequestBox = new BView(BRect(), "reqbox", B_FOLLOW_LEFT, B_WILL_DRAW);
 			RequestBox->SetViewColor(200,200,230);
 			AddChild(RequestBox);
-			fInputBox = new BTextControl(BRect(BPoint(0,0), BSize(200, 30)), "name", B_TRANSLATE("Your name:"), "", new BMessage(H2048_SET_NAME));
+			fInputBox = new BTextControl(BRect(BPoint(0,0), BSize(200, 30)),
+				"name", B_TRANSLATE("Your name:"), "", new BMessage(H2048_SET_NAME));
 			RequestBox->AddChild(fInputBox);
 			ResizeBy(0.0, 35.0);
 			fInputBox->MakeFocus();
@@ -230,7 +231,7 @@ GameWindow::showBoard(bool canUndo)
 	}
 
 	BString highscore_name;
-	highscore_name << B_TRANSLATE("Highscore");
+	highscore_name << B_TRANSLATE("High-score");
 	if(fMaster->fTarget->Username()[0]) 
 	{
 		highscore_name << B_TRANSLATE(" by ") << fMaster->fTarget->Username();
@@ -308,7 +309,10 @@ void
 WindowBoard::gameEnded()
 {
 	fSending = false;
-	(new BAlert(B_TRANSLATE("Title"), B_TRANSLATE("Game Ended"), B_TRANSLATE("OK")))->Go();
+	(new BAlert(B_TRANSLATE("End of game"), B_TRANSLATE(
+		"All tiles locked in place\n"
+		"Like leaves on a frozen lake\n"
+		"The game has ended"), B_TRANSLATE("OK")))->Go();
 }
 
 void
