@@ -1,10 +1,10 @@
-1	English	application/x-vnd.Haiku-Haiku2048	1903625843
+1	English	application/x-vnd.Haiku-Haiku2048	2769894634
 Your name:	WindowBoard		Your name:
 High-score: 0	WindowBoard		High-score: 0
 OK	WindowBoard		OK
 End of game	WindowBoard		End of game
 Haiku2048	System name		Haiku2048
 All tiles locked in place\nLike leaves on a frozen lake\nThe game has ended	WindowBoard		All tiles locked in place\nLike leaves on a frozen lake\nThe game has ended
- by 	WindowBoard		 by 
 Score: 0	WindowBoard		Score: 0
-High-score	WindowBoard		High-score
+High-score:	WindowBoard		High-score:
+High-score by %username%:	WindowBoard		High-score by %username%:

@@ -231,12 +231,11 @@ GameWindow::showBoard(bool canUndo)
 	}
 
 	BString highscore_name;
-	highscore_name << B_TRANSLATE("High-score");
-	if(fMaster->fTarget->Username()[0]) 
-	{
-		highscore_name << B_TRANSLATE(" by ") << fMaster->fTarget->Username();
+	highscore_name << B_TRANSLATE("High-score:");
+	if (fMaster->fTarget->Username()[0]) {
+		highscore_name = B_TRANSLATE("High-score by %username%:");
+		highscore_name.ReplaceFirst("%username%", fMaster->fTarget->Username());
 	}
-	highscore_name << ":";
 	fHighscoreName->SetText(highscore_name.String());
 
 	BString score_highest;
