@@ -76,6 +76,7 @@ protected:
 			void		gameEnded();
 			void		nameRequest();
 			void		boardChanged(bool canUndo);
+			void		setFrame(BRect frame);
 
 private:
 	bool				fSending;
