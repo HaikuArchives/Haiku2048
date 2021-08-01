@@ -1,0 +1,10 @@
+1	Turkish	application/x-vnd.Haiku-Haiku2048	2769894634
+All tiles locked in place\nLike leaves on a frozen lake\nThe game has ended	WindowBoard		Oyun bitti mi\nYapraklar düştüler mi\nSayı saydın mı
+End of game	WindowBoard		Oyun sonu
+High-score by %username%:	WindowBoard		%username% tarafından en yüksek skor:
+High-score:	WindowBoard		En yüksek skor:
+High-score: 0	WindowBoard		En yüksek skor: 0
+OK	WindowBoard		Tamam
+Score: 0	WindowBoard		Skor: 0
+Your name:	WindowBoard		Adınız:
+Haiku2048	System name		Haiku2048

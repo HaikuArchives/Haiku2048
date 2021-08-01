@@ -1,0 +1,10 @@
+1	French	application/x-vnd.Haiku-Haiku2048	2769894634
+All tiles locked in place\nLike leaves on a frozen lake\nThe game has ended	WindowBoard		Toutes les tuiles en place sont verrouillées\nComme des feuilles sur un lac gelé.\nLa partie est finie.
+End of game	WindowBoard		Partie finie
+High-score by %username%:	WindowBoard		Meilleur score par %username% :
+High-score:	WindowBoard		Meilleur score :
+High-score: 0	WindowBoard		Meilleur score : 0
+OK	WindowBoard		D'accord
+Score: 0	WindowBoard		Score : 0
+Your name:	WindowBoard		Votre  nom :
+Haiku2048	System name		Haiku2048

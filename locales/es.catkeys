@@ -1,0 +1,10 @@
+1	Spanish	application/x-vnd.Haiku-Haiku2048	2769894634
+All tiles locked in place\nLike leaves on a frozen lake\nThe game has ended	WindowBoard		Todos los cuadrados bloqueados en su lugar\nComo hojas en un lago congelado\nEl juego ha terminado
+End of game	WindowBoard		Fin del juego
+High-score by %username%:	WindowBoard		Puntaje alto de %username%:
+High-score:	WindowBoard		Puntaje alto:
+High-score: 0	WindowBoard		Puntaje alto: 0
+OK	WindowBoard		Aceptar
+Score: 0	WindowBoard		Puntaje: 0
+Your name:	WindowBoard		Su nombre:
+Haiku2048	System name		Haiku2048
