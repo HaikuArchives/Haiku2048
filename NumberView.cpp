@@ -59,18 +59,43 @@ NumberView::Draw(BRect r)
 		cell512_bg = {237,200,80,0}, cell1024_bg = {237,197,63,0}, cell2048P_bg = {237,194,46,0},
 		cell_dark_fg = {119,110,101};
 	
-	switch (fNumber) {
-	case 2: color_background = cell2_bg; color_foreground = cell_dark_fg; break;
-	case 4: color_background = cell4_bg; color_foreground = cell_dark_fg; break;
-	case 8: color_background = cell8_bg; break;
-	case 16: color_background = cell16_bg; break;
-	case 32: color_background = cell32_bg; break;
-	case 64: color_background = cell64_bg; break;
-	case 128: color_background = cell128_bg; break;
-	case 256: color_background = cell256_bg; break;
-	case 512: color_background = cell512_bg; break;
-	case 1024: color_background = cell1024_bg; break;
-	default: color_background = cell2048P_bg; break;
+	switch (fNumber)
+	{
+		case 2:
+			color_background = cell2_bg;
+			color_foreground = cell_dark_fg;
+			break;
+		case 4:
+			color_background = cell4_bg;
+			color_foreground = cell_dark_fg;
+			break;
+		case 8:
+			color_background = cell8_bg;
+			break;
+		case 16:
+			color_background = cell16_bg;
+			break;
+		case 32:
+			color_background = cell32_bg;
+			break;
+		case 64:
+			color_background = cell64_bg;
+			break;
+		case 128:
+			color_background = cell128_bg;
+			break;
+		case 256:
+			color_background = cell256_bg;
+			break;
+		case 512:
+			color_background = cell512_bg;
+			break;
+		case 1024:
+			color_background = cell1024_bg;
+			break;
+		default:
+			color_background = cell2048P_bg;
+			break;
 	}
 	
 	SetHighColor(color_background);
