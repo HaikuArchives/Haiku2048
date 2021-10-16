@@ -62,17 +62,13 @@ NumberView::Draw(BRect r)
 	switch (fNumber)
 	{
 		case 2:
-		{
 			color_background = cell2_bg;
 			color_foreground = cell_dark_fg;
 			break;
-		}
 		case 4:
-		{
 			color_background = cell4_bg;
 			color_foreground = cell_dark_fg;
 			break;
-		}
 		case 8:
 			color_background = cell8_bg;
 			break;
