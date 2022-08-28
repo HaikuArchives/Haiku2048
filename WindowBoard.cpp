@@ -186,10 +186,11 @@ GameWindow::MessageReceived(BMessage *message)
 		case H2048_REQUEST_NAME:
 		{
 			BView *RequestBox = new BView(BRect(), "reqbox", B_FOLLOW_LEFT, B_WILL_DRAW);
-			RequestBox->SetViewColor(200,200,230);
+			RequestBox->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 			AddChild(RequestBox);
-			fInputBox = new BTextControl(BRect(BPoint(0,0), BSize(200, 30)),
+			fInputBox = new BTextControl(BRect(BPoint(0,10), Bounds().RightBottom() - BPoint(25,0)),
 				"name", B_TRANSLATE("Your name:"), "", new BMessage(H2048_SET_NAME));
+			fInputBox->SetDivider(be_plain_font->StringWidth(fInputBox->Label()) + 5);
 			RequestBox->AddChild(fInputBox);
 			ResizeBy(0.0, 35.0);
 			fInputBox->MakeFocus();
