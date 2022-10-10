@@ -52,7 +52,6 @@ private:
 private:
 	NumberView **		fViews;
 	WindowBoard *		fMaster;
-	HighscoreWindow*	fHighscoreWindow;
 	BStringView *		fScore;
 	BStringView *		fScore_Highest;
 	BStringView *		fHighscoreName;

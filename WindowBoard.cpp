@@ -186,10 +186,10 @@ GameWindow::MessageReceived(BMessage *message)
 		}
 		case H2048_REQUEST_NAME:
 		{
-			fHighscoreWindow = new HighscoreWindow(fMaster->fTarget->Username(),
+			HighscoreWindow highscoreWindow(fMaster->fTarget->Username(),
 				fMaster->fTarget->Score_Highest(), fMaster->fTarget->Score());
-			fHighscoreWindow->Show();
-			fHighscoreWindow->Activate();
+			highscoreWindow.Show();
+			highscoreWindow.Activate();
 			
 			break;
 		}
