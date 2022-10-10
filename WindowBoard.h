@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2015 Markus Himmel
+ * Copyright 2022, Harshit Sharma <harshits908@gmail.com>
  * This file is distributed under the terms of the MIT license
  */
 
@@ -7,9 +8,11 @@
 #define WINDOW_BOARD_H
 
 #include "GameBoard.h"
+#include "HighscoreWindow.h"
 
 #include <Window.h>
 #include <Bitmap.h>
+
 class Game;
 class BButton;
 class NumberView;
@@ -49,6 +52,7 @@ private:
 private:
 	NumberView **		fViews;
 	WindowBoard *		fMaster;
+	HighscoreWindow*	fHighscoreWindow;
 	BStringView *		fScore;
 	BStringView *		fScore_Highest;
 	BStringView *		fHighscoreName;
