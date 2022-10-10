@@ -19,11 +19,9 @@
 
 HighscoreWindow::HighscoreWindow(const char* oldHighscorer, const int32 oldHighscore, const int32 newHighscore)
 	:
-	BWindow(BRect(200, 200, 650, 600), B_TRANSLATE_SYSTEM_NAME("Enter you High Score"), B_TITLED_WINDOW, 0)
+	BWindow(BRect(200, 200, 650, 600), B_TRANSLATE("Enter you High Score"), B_TITLED_WINDOW, 0)
 {
-	BStringView* congratulations = new BStringView("congratulations", B_TRANSLATE(" "));
-	BString congratsText = "Congratulations!";
-	congratulations->SetText(congratsText.String());
+	BStringView* congratulations = new BStringView("congratulations", B_TRANSLATE("Congratulations!"));
 	congratulations->SetFont(be_bold_font);
 	congratulations->SetFontSize(25);
 
