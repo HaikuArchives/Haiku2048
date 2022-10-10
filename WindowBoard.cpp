@@ -195,7 +195,7 @@ GameWindow::MessageReceived(BMessage *message)
 			
 			break;
 		}
-		case H2048_SET_NAME:
+		/*case H2048_SET_NAME:
 		{
 			BMessage req(H2048_NAME_REQUESTED);
 			req.AddString("playername", fInputBox->Text());
@@ -205,7 +205,7 @@ GameWindow::MessageReceived(BMessage *message)
 			RemoveChild(FindView("reqbox"));
 			delete fInputBox;
 			fInputBox = NULL;
-		}
+		}*/
 		default:
 			BWindow::MessageReceived(message);
 			break;

@@ -5,17 +5,20 @@
 
 #include "HighscoreWindow.h"
 
-#include "WindowBoard.h"
+#include "Game.h"
 
 #include <Catalog.h>
 #include <string>
 #include <LayoutBuilder.h>
 #include <Message.h>
+#include <Messenger.h>
 #include <String.h>
 #include <StringView.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "HighscoreWindow"
+
+static const uint32 kNameEntered = 'NmEn';
 
 HighscoreWindow::HighscoreWindow(const char* oldHighscorer, const int32 oldHighscore, const int32 newHighscore)
 	:
@@ -25,20 +28,9 @@ HighscoreWindow::HighscoreWindow(const char* oldHighscorer, const int32 oldHighs
 	congratulations->SetFont(be_bold_font);
 	congratulations->SetFontSize(25);
 
-	/*BString newHighscoreText;
-	newHighscoreText = 
-		B_TRANSLATE("You achieved a new highscore, beating the one\n \
-by %oldHighscorer% by %deltaScore%.\n \
-Your new highscore is %newhighscore%");
-	newHighscoreText.ReplaceFirst("%oldHighscorer%", oldHighscorer);
-	newHighscoreText.ReplaceFirst("%deltaScore%", std::to_string(newHighscore - oldHighscore).c_str());
-	newHighscoreText.ReplaceFirst("%newhighscore%", std::to_string(newHighscore).c_str());
-	fNewHighscoreText = new BStringView("HighscoreWindowText", "");
-	fNewHighscoreText->SetText(newHighscoreText.String());*/
-
 	fInputBox = new
 		BTextControl("NameInput", B_TRANSLATE("Please enter your name:"), NULL,
-		new BMessage(H2048_SET_NAME));
+		new BMessage(kNameEntered));
 	fInputBox->MakeFocus();
 
 	BStringView* line1 = new BStringView("line1", B_TRANSLATE("You achieved a new highscore, beating the one"));
@@ -73,7 +65,6 @@ HighscoreWindow::QuitRequested()
 
 HighscoreWindow::~HighscoreWindow()
 {
-	delete(fNewHighscoreText);
 	delete(fInputBox);
 }
 
@@ -82,6 +73,15 @@ HighscoreWindow::MessageReceived(BMessage* message)
 {
 	switch(message->what)
 	{
+		case kNameEntered:
+		{
+			BMessage *req = new BMessage(H2048_NAME_REQUESTED);
+			req->AddString("playername", fInputBox->Text());
+			BMessenger messenger(this);
+			messenger.SendMessage(req);
+			QuitRequested();
+			break;
+		}
 		default:
 			break;
 	}

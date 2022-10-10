@@ -23,7 +23,6 @@ public:
 
 private:
 
-		BStringView*	fNewHighscoreText;
 		BTextControl*	fInputBox;
 };
 
