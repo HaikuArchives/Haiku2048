@@ -87,6 +87,8 @@ GameWindow::GameWindow(WindowBoard *master)
 	prevHeight = rect.Height();
 	defaultWidth = rect.Width();
 	defaultHeight = rect.Height();
+
+	fPreviousHighscore = fMaster->fTarget->Score_Highest();
 }
 
 BBitmap*
@@ -187,7 +189,7 @@ GameWindow::MessageReceived(BMessage *message)
 		case H2048_REQUEST_NAME:
 		{
 			HighscoreWindow highscoreWindow(fMaster->fTarget->Username(),
-				fMaster->fTarget->Score_Highest(), fMaster->fTarget->Score());
+				fPreviousHighscore, fMaster->fTarget->Score());
 			highscoreWindow.Show();
 			highscoreWindow.Activate();
 			

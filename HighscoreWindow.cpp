@@ -19,33 +19,46 @@
 
 HighscoreWindow::HighscoreWindow(const char* oldHighscorer, const int32 oldHighscore, const int32 newHighscore)
 	:
-	BWindow(BRect(200, 200, 650, 600), B_TRANSLATE("Enter you High Score"), B_TITLED_WINDOW, 0)
+	BWindow(BRect(200, 200, 600, 450), B_TRANSLATE("Enter you High Score"), B_TITLED_WINDOW, 0)
 {
 	BStringView* congratulations = new BStringView("congratulations", B_TRANSLATE("Congratulations!"));
 	congratulations->SetFont(be_bold_font);
 	congratulations->SetFontSize(25);
 
-	BString newHighscoreText;
+	/*BString newHighscoreText;
 	newHighscoreText = 
 		B_TRANSLATE("You achieved a new highscore, beating the one\n \
-			by %oldHighscorer% by %deltaScore%.\n \
-			Your new highscore is %newhighscore%\n");
+by %oldHighscorer% by %deltaScore%.\n \
+Your new highscore is %newhighscore%");
 	newHighscoreText.ReplaceFirst("%oldHighscorer%", oldHighscorer);
 	newHighscoreText.ReplaceFirst("%deltaScore%", std::to_string(newHighscore - oldHighscore).c_str());
 	newHighscoreText.ReplaceFirst("%newhighscore%", std::to_string(newHighscore).c_str());
-	fNewHighscoreText->SetText(newHighscoreText);
+	fNewHighscoreText = new BStringView("HighscoreWindowText", "");
+	fNewHighscoreText->SetText(newHighscoreText.String());*/
 
 	fInputBox = new
 		BTextControl("NameInput", B_TRANSLATE("Please enter your name:"), NULL,
 		new BMessage(H2048_SET_NAME));
 	fInputBox->MakeFocus();
 
+	BStringView* line1 = new BStringView("line1", B_TRANSLATE("You achieved a new highscore, beating the one"));
+	BString line2Text = B_TRANSLATE("by %oldHighscorer% by %deltaScore%.");
+	BString line3Text = B_TRANSLATE("Your new highscore is %newhighscore%");
+	
+	line2Text.ReplaceFirst("%oldHighscorer%", oldHighscorer);
+	line2Text.ReplaceFirst("%deltaScore%", std::to_string(newHighscore - oldHighscore).c_str());
+	line3Text.ReplaceFirst("%newhighscore%", std::to_string(newHighscore).c_str());
+	BStringView* line2 = new BStringView("line2", line2Text.String());
+	BStringView* line3 = new BStringView("line3", line3Text.String());
+
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_INSETS)
-		.AddGroup(B_HORIZONTAL)
+		.AddGroup(B_VERTICAL)
 			.Add(congratulations)
 			.AddStrut(5)
-			.Add(fNewHighscoreText)
+			.Add(line1)
+			.Add(line2)
+			.Add(line3)
 			.AddStrut(5)
 			.Add(fInputBox)
 			.AddGlue()

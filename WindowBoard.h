@@ -63,6 +63,7 @@ private:
 	// we have to control the state of it
 	// (enabled / disabled)
 	BButton * 			undoButton;
+	int32				fPreviousHighscore;
 };
 
 
