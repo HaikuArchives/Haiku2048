@@ -62,6 +62,7 @@ GameWindow::GameWindow(WindowBoard *master)
 			.AddGlue()
 			.Add(fScore)
 			.End()
+		.AddGlue()
 		.Add(fBoard);
 
 
