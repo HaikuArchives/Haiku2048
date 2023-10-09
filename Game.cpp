@@ -112,6 +112,8 @@ Game::newGame()
 {
 	fScore = 0;
 	fCanUndo = false;
+	fPreviousHighscore = fScore_Highest;
+	memcpy(fPreviousUsername, fUsername, sizeof(char) * 32);
 
 	// Clear the board
 	for (uint32 x = 0; x < fSizeX; x++)
@@ -183,11 +185,25 @@ Game::Score_Highest() const
 	return fScore_Highest;
 }
 
+
+uint32
+Game::PreviousHighscore() const
+{
+	return fPreviousHighscore;
+}
+
 const char *
 Game::Username() const
 {
 	return fUsername;
 }
+
+const char *
+Game::PreviousUsername() const
+{
+	return fPreviousUsername;
+}
+
 
 void
 Game::makeMove(GameMove direction)
