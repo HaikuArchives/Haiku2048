@@ -39,6 +39,13 @@ GameBoard::MessageReceived(BMessage *message)
 
 			boardChanged(canUndo);
 			break;
+		case H2048_SET_FRAME:
+		{
+			BRect frame;
+			message->FindRect("frame",	&frame);
+			setFrame(frame);
+			break;
+		}
 		case H2048_REQUEST_NAME:
 			nameRequest();
 		default:

@@ -109,6 +109,10 @@ GameWindow::~GameWindow()
 bool
 GameWindow::QuitRequested()
 {
+	BMessenger game(NULL, fMaster->fTarget);
+	BMessage saveMessage(H2048_SAVE_GAME);
+	saveMessage.AddRect("frame",Frame());
+	game.SendMessage(&saveMessage);
 	be_app_messenger.SendMessage(B_QUIT_REQUESTED);
 	return true;
 }
@@ -129,6 +133,16 @@ GameWindow::MessageReceived(BMessage *message)
 			bool canUndo = false;
 			message->FindBool("canUndo", &canUndo);
 			showBoard(canUndo);
+			break;
+		}
+		case H2048_SET_FRAME:
+		{
+			BRect frame;
+			message->FindRect("frame",&frame);
+			MoveTo(frame.LeftTop());
+			prevWidth = (int)frame.Width();
+			prevHeight = (int)frame.Height();
+			ResizeTo((int)frame.Width(),(int)frame.Height());
 			break;
 		}
 		case H2048_UNDO_MOVE:
@@ -331,4 +345,14 @@ WindowBoard::nameRequest()
 {
 	BMessenger messenger(NULL, fWindow);
 	messenger.SendMessage(H2048_REQUEST_NAME);
+}
+
+void
+WindowBoard::setFrame(BRect frame)
+{
+	BMessage setFrame(H2048_SET_FRAME);
+	setFrame.AddRect("frame", frame);
+
+	BMessenger messenger(NULL, fWindow);
+	messenger.SendMessage(&setFrame);
 }

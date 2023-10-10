@@ -17,7 +17,8 @@ enum
 	H2048_GAME_STARTED		= '48GS',
 	H2048_GAME_ENDED		= '48GE',
 	H2048_REQUEST_NAME		= '48RN',
-	H2048_BOARD_CHANGED		= '48BC'
+	H2048_BOARD_CHANGED		= '48BC',
+	H2048_SET_FRAME  		= '48SB'
 };
 
 class GameBoard : public BLooper
@@ -33,6 +34,7 @@ protected:
 	virtual	void		gameEnded() = 0;
 	virtual void 		nameRequest() = 0;
 	virtual	void		boardChanged(bool canUndo) = 0;
+	virtual void		setFrame(BRect frame) = 0;
 
 protected:
 	Game *			fTarget;
