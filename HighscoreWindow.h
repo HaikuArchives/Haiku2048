@@ -17,6 +17,7 @@ class BTextControl;
 enum
 {
 	H2048_NAME_ENTERED = '48NE',
+	H2048_CHANGE_NAME = '48CN',
 };
 
 class HighscoreWindow : public BWindow

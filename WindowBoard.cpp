@@ -8,6 +8,7 @@
 
 #include "Game.h"
 #include "NumberView.cpp"
+#include "HighscoreWindow.h"
 
 #include <Alert.h>
 #include <Application.h>
@@ -29,10 +30,10 @@ GameWindow::GameWindow(WindowBoard *master)
 	:
 	BWindow(BRect(100, 100, 500, 400), B_TRANSLATE_SYSTEM_NAME("Haiku2048"), B_TITLED_WINDOW, 0),
 	fMaster(master)
-{	
+{
 	fIconUndo = initIcon("icon_undo.hvif");
 	fIconNew = initIcon("icon_new.hvif");
-	
+
 	BButton *newGameButton = new BButton("newgame", "",
 		new BMessage(H2048_NEW_GAME));
 	newGameButton->SetIcon(fIconNew);
@@ -83,7 +84,7 @@ GameWindow::GameWindow(WindowBoard *master)
 	}
 	ResizeToPreferred();
 	BRect rect = Bounds();
-	prevWidth = rect.Width() - 20; 	// due to changes in font size, some of the boxes at 
+	prevWidth = rect.Width() - 20; 	// due to changes in font size, some of the boxes at
 									// the bottom would be concealed. This is to expand window size.
 	prevHeight = rect.Height();
 	defaultWidth = rect.Width();
@@ -142,7 +143,7 @@ GameWindow::MessageReceived(BMessage *message)
 				// subsequent keypressed are acknowledged
 				fMaster->fSending = true;
 			}
-			
+
 			BMessenger game(NULL, fMaster->fTarget);
 			game.SendMessage(message);
 			break;
@@ -193,7 +194,7 @@ GameWindow::MessageReceived(BMessage *message)
 								fMaster->fTarget->Score(), messenger);
 			highscoreWindow->Show();
 			highscoreWindow->Activate();
-		
+
 			break;
 		}
 		default:
@@ -242,12 +243,12 @@ GameWindow::showBoard(bool canUndo)
 }
 
 void
-GameWindow::FrameResized(float width, 
+GameWindow::FrameResized(float width,
 			 float height)
 {
 	// We don't want the user to scale the window so small that
 	// there's no space for the buttons.
-	if (width < defaultWidth && height < defaultHeight) {
+	if (width < defaultWidth || height < defaultHeight) {
 		ResizeTo(defaultWidth, defaultHeight);
 		width=defaultWidth;
 	}

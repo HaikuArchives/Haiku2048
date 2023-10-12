@@ -35,7 +35,7 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	sprintf(fHighscore_path, "%s/%s", buffer, HAIKU2048_DIRECTORY);
 	result = create_directory(fHighscore_path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	sprintf(fHighscore_path, "%s/%s", fHighscore_path, HIGHSCORE_FILENAME);
-	
+
 	std::ifstream highscore(fHighscore_path, std::ios::binary);
 	memset(fUsername, 0, sizeof(char) * 32);
 	memset(fPlayername, 0, sizeof(char) * 32);
@@ -113,7 +113,7 @@ Game::newGame()
 	fScore = 0;
 	fCanUndo = false;
 	fPreviousHighscore = fScore_Highest;
-	memcpy(fPreviousUsername, fUsername, sizeof(char) * 32);
+	strlcpy(fPreviousUsername, fUsername, sizeof(fPreviousUsername));
 
 	// Clear the board
 	for (uint32 x = 0; x < fSizeX; x++)

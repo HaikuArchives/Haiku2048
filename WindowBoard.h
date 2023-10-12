@@ -8,7 +8,6 @@
 #define WINDOW_BOARD_H
 
 #include "GameBoard.h"
-#include "HighscoreWindow.h"
 
 #include <Window.h>
 #include <Bitmap.h>
@@ -36,12 +35,12 @@ class GameWindow : public BWindow
 public:
 						GameWindow(WindowBoard *master);
 						~GameWindow();
-						
+
 			float 		prevWidth;
 			float 		prevHeight;
 			float 		defaultWidth;
 			float 		defaultHeight;
-			
+
 			bool		QuitRequested();
 			void		FrameResized(float width, float height);
 			void		MessageReceived(BMessage *message);

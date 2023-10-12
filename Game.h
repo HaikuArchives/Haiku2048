@@ -62,7 +62,7 @@ private:
 			uint32 *	boardAt(uint32 x, uint32 y);
 			uint32		newTile();
 			bool		gameOver();
-			
+
 			void		writeHighscore();
 
 private:
