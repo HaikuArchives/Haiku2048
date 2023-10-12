@@ -19,7 +19,8 @@ enum
 	H2048_NAME_ENTERED = '48NE',
 };
 
-class HighscoreWindow : public BWindow{
+class HighscoreWindow : public BWindow
+{
 
 public:
 			HighscoreWindow(const char* oldHighscorer, const int32 oldHighscore,
