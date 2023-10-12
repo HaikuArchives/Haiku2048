@@ -86,6 +86,7 @@ HighscoreWindow::HighscoreWindow(const char* oldHighscorer, const int32 oldHighs
 	this->ResizeToPreferred();
 }
 
+
 bool
 HighscoreWindow::QuitRequested()
 {
