@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2015 Markus Himmel
+ * Copyright 2022, Harshit Sharma <harshits908@gmail.com>
  * This file is distributed under the terms of the MIT license
  */
 
@@ -10,6 +11,7 @@
 
 #include <Window.h>
 #include <Bitmap.h>
+
 class Game;
 class BButton;
 class NumberView;
@@ -33,12 +35,12 @@ class GameWindow : public BWindow
 public:
 						GameWindow(WindowBoard *master);
 						~GameWindow();
-						
+
 			float 		prevWidth;
 			float 		prevHeight;
 			float 		defaultWidth;
 			float 		defaultHeight;
-			
+
 			bool		QuitRequested();
 			void		FrameResized(float width, float height);
 			void		MessageReceived(BMessage *message);
@@ -60,6 +62,8 @@ private:
 	// we have to control the state of it
 	// (enabled / disabled)
 	BButton * 			undoButton;
+	int32				fPreviousHighscore;
+	const char *		fPreviousUsername;
 };
 
 

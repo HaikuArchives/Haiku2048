@@ -50,6 +50,8 @@ public:
 			uint32		SizeX() const;
 			uint32		SizeY() const;
 			const char *Username() const;
+			uint32		PreviousHighscore() const;
+			const char *PreviousUsername() const;
 
 private:
 			void		newGame();
@@ -60,7 +62,7 @@ private:
 			uint32 *	boardAt(uint32 x, uint32 y);
 			uint32		newTile();
 			bool		gameOver();
-			
+
 			void		writeHighscore();
 
 private:
@@ -80,6 +82,8 @@ private:
 	bool						fInGame;
 	uint32						fScore;
 	uint32						fScore_Highest;
+	uint32						fPreviousHighscore;
+	char						fPreviousUsername[32];
 	char						fUsername[32];
 	char						fPlayername[32];
 	char						fHighscore_path[128];

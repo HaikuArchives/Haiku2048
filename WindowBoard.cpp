@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2015 Markus Himmel
+ * Copyright 2022, Harshit Sharma <harshits908@gmail.com>
  * This file is distributed under the terms of the MIT license
  */
 
@@ -7,6 +8,7 @@
 
 #include "Game.h"
 #include "NumberView.cpp"
+#include "HighscoreWindow.h"
 
 #include <Alert.h>
 #include <Application.h>
@@ -28,10 +30,10 @@ GameWindow::GameWindow(WindowBoard *master)
 	:
 	BWindow(BRect(100, 100, 500, 400), B_TRANSLATE_SYSTEM_NAME("Haiku2048"), B_TITLED_WINDOW, 0),
 	fMaster(master)
-{	
+{
 	fIconUndo = initIcon("icon_undo.hvif");
 	fIconNew = initIcon("icon_new.hvif");
-	
+
 	BButton *newGameButton = new BButton("newgame", "",
 		new BMessage(H2048_NEW_GAME));
 	newGameButton->SetIcon(fIconNew);
@@ -82,7 +84,7 @@ GameWindow::GameWindow(WindowBoard *master)
 	}
 	ResizeToPreferred();
 	BRect rect = Bounds();
-	prevWidth = rect.Width() - 20; 	// due to changes in font size, some of the boxes at 
+	prevWidth = rect.Width() - 20; 	// due to changes in font size, some of the boxes at
 									// the bottom would be concealed. This is to expand window size.
 	prevHeight = rect.Height();
 	defaultWidth = rect.Width();
@@ -141,7 +143,7 @@ GameWindow::MessageReceived(BMessage *message)
 				// subsequent keypressed are acknowledged
 				fMaster->fSending = true;
 			}
-			
+
 			BMessenger game(NULL, fMaster->fTarget);
 			game.SendMessage(message);
 			break;
@@ -186,27 +188,14 @@ GameWindow::MessageReceived(BMessage *message)
 		}
 		case H2048_REQUEST_NAME:
 		{
-			BView *RequestBox = new BView(BRect(), "reqbox", B_FOLLOW_LEFT, B_WILL_DRAW);
-			RequestBox->SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
-			AddChild(RequestBox);
-			fInputBox = new BTextControl(BRect(BPoint(0,10), Bounds().RightBottom() - BPoint(25,0)),
-				"name", B_TRANSLATE("Your name:"), "", new BMessage(H2048_SET_NAME));
-			fInputBox->SetDivider(be_plain_font->StringWidth(fInputBox->Label()) + 5);
-			RequestBox->AddChild(fInputBox);
-			ResizeBy(0.0, 35.0);
-			fInputBox->MakeFocus();
+			BMessenger messenger(fMaster->fTarget);
+			HighscoreWindow *highscoreWindow = new HighscoreWindow(
+								fMaster->fTarget->PreviousUsername(), fMaster->fTarget->PreviousHighscore(),
+								fMaster->fTarget->Score(), messenger);
+			highscoreWindow->Show();
+			highscoreWindow->Activate();
+
 			break;
-		}
-		case H2048_SET_NAME:
-		{
-			BMessage req(H2048_NAME_REQUESTED);
-			req.AddString("playername", fInputBox->Text());
-			BMessenger messenger(NULL, fMaster->fTarget);
-			messenger.SendMessage(&req);
-			ResizeBy(0.0, -35.0);
-			RemoveChild(FindView("reqbox"));
-			delete fInputBox;
-			fInputBox = NULL;
 		}
 		default:
 			BWindow::MessageReceived(message);
@@ -254,12 +243,12 @@ GameWindow::showBoard(bool canUndo)
 }
 
 void
-GameWindow::FrameResized(float width, 
+GameWindow::FrameResized(float width,
 			 float height)
 {
 	// We don't want the user to scale the window so small that
 	// there's no space for the buttons.
-	if (width < defaultWidth) {
+	if (width < defaultWidth || height < defaultHeight) {
 		ResizeTo(defaultWidth, defaultHeight);
 		width=defaultWidth;
 	}
