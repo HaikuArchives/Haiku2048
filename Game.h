@@ -13,6 +13,7 @@
 
 #define HIGHSCORE_FILENAME "Highscore"
 #define HAIKU2048_DIRECTORY "Haiku2048"
+#define SAVEFILE_FILENAME "Haiku2048_state"
 
 class BMessage;
 class BMessenger;
@@ -30,7 +31,10 @@ enum
 	H2048_NEW_GAME		= '48NG',
 	H2048_NAME_REQUESTED= '48NR',
 	H2048_UNDO_MOVE		= '48UM',
-	H2048_MAKE_MOVE		= '48MM'
+	H2048_MAKE_MOVE		= '48MM',
+	H2048_LOAD_GAME		= '48LG',
+	H2048_SAVE_GAME		= '48SG',
+	H2048_SAVE_MESSAGE  = '48SM'
 };
 
 class Game : public BLooper
@@ -59,6 +63,8 @@ private:
 			void		undoMove();
 			void		copyBoard(uint32 *from, uint32 *to);
 			void		broadcastMessage(BMessage &msg);
+			status_t	save(BRect frame);
+			bool		load();
 			uint32 *	boardAt(uint32 x, uint32 y);
 			uint32		newTile();
 			bool		gameOver();
@@ -87,6 +93,7 @@ private:
 	char						fUsername[32];
 	char						fPlayername[32];
 	char						fHighscore_path[128];
+	char						fSaveFile_path[128];
 };
 
 #endif // GAME_H
