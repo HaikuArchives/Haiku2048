@@ -76,7 +76,7 @@ Game::MessageReceived(BMessage *message)
 		case H2048_LOAD_GAME:
 			if(!load()){
 				newGame();
-				}
+			}
 			break;
 		case H2048_SAVE_GAME:
 		{
@@ -432,7 +432,8 @@ Game::gameOver()
 }
 
 void
-Game::copyBoard(uint32 *from, uint32 *to) {
+Game::copyBoard(uint32 *from, uint32 *to)
+{
 	for (int32 x = 0; x < fSizeX; ++x) {
 		for (int32 y = 0; y < fSizeY; ++y) {
 			to[x * fSizeX + y] = from[x * fSizeX + y];
@@ -441,7 +442,8 @@ Game::copyBoard(uint32 *from, uint32 *to) {
 }
 
 void
-Game::undoMove() {
+Game::undoMove()
+{
 	if (!fCanUndo) return;
 
 	copyBoard(fPreviousBoard, fBoard);
@@ -454,8 +456,10 @@ Game::undoMove() {
 	broadcastMessage(changed);
 }
 
+
 status_t
-Game::save(BRect frame){
+Game::save(BRect frame)
+{
 	BFile saveFile(fSaveFile_path,B_WRITE_ONLY | B_CREATE_FILE);
 
 	BMessage saveMessage(H2048_SAVE_MESSAGE);
@@ -472,26 +476,29 @@ Game::save(BRect frame){
 	saveMessage.AddRect("windowFrame",frame);
 
 	return saveMessage.Flatten(&saveFile);
-	}
+}
+
 bool
-Game::load(){
+Game::load() {
 	BFile saveFile(fSaveFile_path,B_READ_ONLY);
 
 	BMessage saveMessage(H2048_SAVE_MESSAGE);
 	status_t result = saveMessage.Unflatten(&saveFile);
-	if(result!= B_OK){
+	if(result!= B_OK) {
 		return false;
 	}
 
 	bool loadOK = true;
 
-	for(int i =0;i<fSizeX*fSizeY;i++){
+	for(int i =0;i<fSizeX*fSizeY;i++) {
 		loadOK = loadOK && saveMessage.FindUInt32("board",i,&fBoard[i]) == B_OK;
-		loadOK = loadOK && saveMessage.FindUInt32("previousBoard",i, &fPreviousBoard[i]) == B_OK;
-		}
+		loadOK = loadOK && saveMessage.FindUInt32("previousBoard",i,
+													&fPreviousBoard[i]) == B_OK;
+	}
 
 	loadOK = loadOK && saveMessage.FindUInt32("score",&fScore) == B_OK;
-	loadOK = loadOK && saveMessage.FindUInt32("previousScore",&fPreviousScore) == B_OK;
+	loadOK = loadOK && saveMessage.FindUInt32("previousScore",
+													&fPreviousScore) == B_OK;
 	loadOK = loadOK && saveMessage.FindBool("canUndo",&fCanUndo) == B_OK;
 
 	BRect frame;
@@ -513,4 +520,4 @@ Game::load(){
 
 	fInGame = true;
 	return true;
-	}
+}

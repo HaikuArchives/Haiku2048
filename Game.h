@@ -13,7 +13,7 @@
 
 #define HIGHSCORE_FILENAME "Highscore"
 #define HAIKU2048_DIRECTORY "Haiku2048"
-#define SAVEFILE_FILENAME "Save"
+#define SAVEFILE_FILENAME "Haiku2048_state"
 
 class BMessage;
 class BMessenger;
@@ -66,7 +66,7 @@ private:
 			uint32 *	boardAt(uint32 x, uint32 y);
 			uint32		newTile();
 			bool		gameOver();
-			
+
 			void		writeHighscore();
 
 private:
