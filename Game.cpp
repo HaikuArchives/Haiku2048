@@ -80,7 +80,7 @@ Game::MessageReceived(BMessage *message)
 		case H2048_SAVE_GAME:
 		{
 			BRect frame;
-			message->FindRect("frame",&frame);
+			message->FindRect("frame", &frame);
 			save(frame);
 			break;
 		}
@@ -475,20 +475,20 @@ Game::undoMove()
 status_t
 Game::save(BRect frame)
 {
-	BFile saveFile(fSaveFile_path,B_WRITE_ONLY | B_CREATE_FILE);
+	BFile saveFile(fSaveFile_path, B_WRITE_ONLY | B_CREATE_FILE);
 
 	BMessage saveMessage(H2048_SAVE_MESSAGE);
 
-	for(int i =0;i<fSizeX*fSizeY;i++){
-		saveMessage.AddUInt32("board",fBoard[i]);
+	for (int i = 0; i < fSizeX * fSizeY; i++) {
+		saveMessage.AddUInt32("board", fBoard[i]);
 		saveMessage.AddUInt32("previousBoard", fPreviousBoard[i]);
 		}
 
-	saveMessage.AddUInt32("score",fScore);
-	saveMessage.AddUInt32("previousScore",fPreviousScore);
+	saveMessage.AddUInt32("score", fScore);
+	saveMessage.AddUInt32("previousScore", fPreviousScore);
 
-	saveMessage.AddBool("canUndo",fCanUndo);
-	saveMessage.AddRect("windowFrame",frame);
+	saveMessage.AddBool("canUndo", fCanUndo);
+	saveMessage.AddRect("windowFrame", frame);
 
 	return saveMessage.Flatten(&saveFile);
 }
@@ -496,32 +496,35 @@ Game::save(BRect frame)
 bool
 Game::load()
 {
-	BFile saveFile(fSaveFile_path,B_READ_ONLY);
+	BFile saveFile(fSaveFile_path, B_READ_ONLY);
 
 	BMessage saveMessage(H2048_SAVE_MESSAGE);
 	status_t result = saveMessage.Unflatten(&saveFile);
-	if(result!= B_OK) {
+	if (result != B_OK)
 		return false;
-	}
 
 	bool loadOK = true;
 
-	for(int i =0;i<fSizeX*fSizeY;i++) {
-		loadOK = loadOK && saveMessage.FindUInt32("board",i,&fBoard[i]) == B_OK;
-		loadOK = loadOK && saveMessage.FindUInt32("previousBoard",i,&fPreviousBoard[i]) == B_OK;
+	for (int i = 0; i < fSizeX * fSizeY; i++) {
+		loadOK = loadOK && saveMessage.FindUInt32("board", i, &fBoard[i]) == B_OK;
+		loadOK = loadOK && saveMessage.FindUInt32("previousBoard", i, &fPreviousBoard[i]) == B_OK;
 	}
 
-	loadOK = loadOK && saveMessage.FindUInt32("score",&fScore) == B_OK;
-	loadOK = loadOK && saveMessage.FindUInt32("previousScore",&fPreviousScore) == B_OK;
-	loadOK = loadOK && saveMessage.FindBool("canUndo",&fCanUndo) == B_OK;
+	loadOK = loadOK && saveMessage.FindUInt32("score", &fScore) == B_OK;
+	loadOK = loadOK && saveMessage.FindUInt32("previousScore", &fPreviousScore) == B_OK;
+	loadOK = loadOK && saveMessage.FindBool("canUndo", &fCanUndo) == B_OK;
 
 	BRect frame;
-	loadOK = loadOK && saveMessage.FindRect("windowFrame",&frame) == B_OK;
+	loadOK = loadOK && saveMessage.FindRect("windowFrame", &frame) == B_OK;
 
 	if(!loadOK) return false;
 
+	// If game over, create a new game
+	if (gameOver())
+		newGame();
+
 	BMessage setFrameMessage(H2048_SET_FRAME);
-	setFrameMessage.AddRect("frame",frame);
+	setFrameMessage.AddRect("frame", frame);
 	broadcastMessage(setFrameMessage);
 
 	BMessage startNotification(H2048_GAME_STARTED);

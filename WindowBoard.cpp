@@ -113,7 +113,7 @@ GameWindow::QuitRequested()
 {
 	BMessenger game(NULL, fMaster->fTarget);
 	BMessage saveMessage(H2048_SAVE_GAME);
-	saveMessage.AddRect("frame",Frame());
+	saveMessage.AddRect("frame", Frame());
 	game.SendMessage(&saveMessage);
 	be_app_messenger.SendMessage(B_QUIT_REQUESTED);
 	return true;
@@ -140,11 +140,11 @@ GameWindow::MessageReceived(BMessage *message)
 		case H2048_SET_FRAME:
 		{
 			BRect frame;
-			message->FindRect("frame",&frame);
+			message->FindRect("frame", &frame);
 			MoveTo(frame.LeftTop());
 			prevWidth = (int)frame.Width();
 			prevHeight = (int)frame.Height();
-			ResizeTo((int)frame.Width(),(int)frame.Height());
+			ResizeTo((int)frame.Width(), (int)frame.Height());
 			break;
 		}
 		case H2048_UNDO_MOVE:
