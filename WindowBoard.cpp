@@ -22,6 +22,7 @@
 #include <StringView.h>
 #include <IconUtils.h>
 #include <Resources.h>
+#include <Point.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "WindowBoard"
@@ -206,6 +207,13 @@ GameWindow::MessageReceived(BMessage *message)
 			HighscoreWindow *highscoreWindow = new HighscoreWindow(
 								fMaster->fTarget->PreviousUsername(), fMaster->fTarget->PreviousHighscore(),
 								fMaster->fTarget->Score(), messenger);
+
+			// Get main window position and center highscore window
+			BRect mainFrame = this->Frame();
+			BRect highscoreFrame = highscoreWindow->Frame();
+			int32 x = mainFrame.LeftTop().x + (mainFrame.Width() / 2) - (highscoreFrame.Width() / 2);
+			int32 y = mainFrame.LeftTop().y + (mainFrame.Height() / 2) - (highscoreFrame.Height() / 2);
+			highscoreWindow->MoveTo(x, y);
 			highscoreWindow->Show();
 			highscoreWindow->Activate();
 
