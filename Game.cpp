@@ -5,6 +5,7 @@
 
 #include "Game.h"
 #include "GameBoard.h"
+#include "WindowBoard.h"
 
 #include <algorithm>
 #include <cstdlib>
@@ -36,6 +37,9 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	result = create_directory(fHighscore_path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	sprintf(fHighscore_path, "%s/%s", fHighscore_path, HIGHSCORE_FILENAME);
 
+	sprintf(fSaveFile_path, "%s/%s", buffer, HAIKU2048_DIRECTORY);
+	sprintf(fSaveFile_path, "%s/%s", fSaveFile_path, SAVEFILE_FILENAME);
+
 	std::ifstream highscore(fHighscore_path, std::ios::binary);
 	memset(fUsername, 0, sizeof(char) * 32);
 	memset(fPlayername, 0, sizeof(char) * 32);
@@ -47,7 +51,6 @@ Game::Game(uint32 sizeX, uint32 sizeY)
 	}
 	fBoard = new uint32[fSizeX * fSizeY];
 	fPreviousBoard = new uint32[fSizeX * fSizeY];
-
 	Run();
 }
 
@@ -70,6 +73,17 @@ Game::MessageReceived(BMessage *message)
 		case H2048_NEW_GAME:
 			newGame();
 			break;
+		case H2048_LOAD_GAME:
+			if(!load())
+				newGame();
+			break;
+		case H2048_SAVE_GAME:
+		{
+			BRect frame;
+			message->FindRect("frame", &frame);
+			save(frame);
+			break;
+		}
 		case H2048_NAME_REQUESTED:
 		{
 			sprintf(fPlayername, "%s", (const char*)message->FindString("playername"));
@@ -433,7 +447,8 @@ Game::gameOver()
 }
 
 void
-Game::copyBoard(uint32 *from, uint32 *to) {
+Game::copyBoard(uint32 *from, uint32 *to)
+{
 	for (int32 x = 0; x < fSizeX; ++x) {
 		for (int32 y = 0; y < fSizeY; ++y) {
 			to[x * fSizeX + y] = from[x * fSizeX + y];
@@ -442,7 +457,8 @@ Game::copyBoard(uint32 *from, uint32 *to) {
 }
 
 void
-Game::undoMove() {
+Game::undoMove()
+{
 	if (!fCanUndo) return;
 
 	copyBoard(fPreviousBoard, fBoard);
@@ -453,4 +469,72 @@ Game::undoMove() {
 	// Now user can't undo anymore
 	changed.AddBool("canUndo", false);
 	broadcastMessage(changed);
+}
+
+
+status_t
+Game::save(BRect frame)
+{
+	BFile saveFile(fSaveFile_path, B_WRITE_ONLY | B_CREATE_FILE);
+
+	BMessage saveMessage(H2048_SAVE_MESSAGE);
+
+	for (int i = 0; i < fSizeX * fSizeY; i++) {
+		saveMessage.AddUInt32("board", fBoard[i]);
+		saveMessage.AddUInt32("previousBoard", fPreviousBoard[i]);
+		}
+
+	saveMessage.AddUInt32("score", fScore);
+	saveMessage.AddUInt32("previousScore", fPreviousScore);
+
+	saveMessage.AddBool("canUndo", fCanUndo);
+	saveMessage.AddRect("windowFrame", frame);
+
+	return saveMessage.Flatten(&saveFile);
+}
+
+bool
+Game::load()
+{
+	BFile saveFile(fSaveFile_path, B_READ_ONLY);
+
+	BMessage saveMessage(H2048_SAVE_MESSAGE);
+	status_t result = saveMessage.Unflatten(&saveFile);
+	if (result != B_OK)
+		return false;
+
+	bool loadOK = true;
+
+	for (int i = 0; i < fSizeX * fSizeY; i++) {
+		loadOK = loadOK && saveMessage.FindUInt32("board", i, &fBoard[i]) == B_OK;
+		loadOK = loadOK && saveMessage.FindUInt32("previousBoard", i, &fPreviousBoard[i]) == B_OK;
+	}
+
+	loadOK = loadOK && saveMessage.FindUInt32("score", &fScore) == B_OK;
+	loadOK = loadOK && saveMessage.FindUInt32("previousScore", &fPreviousScore) == B_OK;
+	loadOK = loadOK && saveMessage.FindBool("canUndo", &fCanUndo) == B_OK;
+
+	BRect frame;
+	loadOK = loadOK && saveMessage.FindRect("windowFrame", &frame) == B_OK;
+
+	if(!loadOK) return false;
+
+	// If game over, create a new game
+	if (gameOver())
+		newGame();
+
+	BMessage setFrameMessage(H2048_SET_FRAME);
+	setFrameMessage.AddRect("frame", frame);
+	broadcastMessage(setFrameMessage);
+
+	BMessage startNotification(H2048_GAME_STARTED);
+	broadcastMessage(startNotification);
+
+	//Notify the boards about fCanUndo state
+	BMessage changed(H2048_BOARD_CHANGED);
+	changed.AddBool("canUndo", fCanUndo);
+	broadcastMessage(changed);
+
+	fInGame = true;
+	return true;
 }

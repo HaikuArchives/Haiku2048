@@ -22,6 +22,7 @@
 #include <StringView.h>
 #include <IconUtils.h>
 #include <Resources.h>
+#include <Point.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "WindowBoard"
@@ -111,6 +112,10 @@ GameWindow::~GameWindow()
 bool
 GameWindow::QuitRequested()
 {
+	BMessenger game(NULL, fMaster->fTarget);
+	BMessage saveMessage(H2048_SAVE_GAME);
+	saveMessage.AddRect("frame", Frame());
+	game.SendMessage(&saveMessage);
 	be_app_messenger.SendMessage(B_QUIT_REQUESTED);
 	return true;
 }
@@ -131,6 +136,16 @@ GameWindow::MessageReceived(BMessage *message)
 			bool canUndo = false;
 			message->FindBool("canUndo", &canUndo);
 			showBoard(canUndo);
+			break;
+		}
+		case H2048_SET_FRAME:
+		{
+			BRect frame;
+			message->FindRect("frame", &frame);
+			MoveTo(frame.LeftTop());
+			prevWidth = (int)frame.Width();
+			prevHeight = (int)frame.Height();
+			ResizeTo((int)frame.Width(), (int)frame.Height());
 			break;
 		}
 		case H2048_UNDO_MOVE:
@@ -192,6 +207,13 @@ GameWindow::MessageReceived(BMessage *message)
 			HighscoreWindow *highscoreWindow = new HighscoreWindow(
 								fMaster->fTarget->PreviousUsername(), fMaster->fTarget->PreviousHighscore(),
 								fMaster->fTarget->Score(), messenger);
+
+			// Get main window position and center highscore window
+			BRect mainFrame = this->Frame();
+			BRect highscoreFrame = highscoreWindow->Frame();
+			int32 x = mainFrame.LeftTop().x + (mainFrame.Width() / 2) - (highscoreFrame.Width() / 2);
+			int32 y = mainFrame.LeftTop().y + (mainFrame.Height() / 2) - (highscoreFrame.Height() / 2);
+			highscoreWindow->MoveTo(x, y);
 			highscoreWindow->Show();
 			highscoreWindow->Activate();
 
@@ -320,4 +342,14 @@ WindowBoard::nameRequest()
 {
 	BMessenger messenger(NULL, fWindow);
 	messenger.SendMessage(H2048_REQUEST_NAME);
+}
+
+void
+WindowBoard::setFrame(BRect frame)
+{
+	BMessage setFrame(H2048_SET_FRAME);
+	setFrame.AddRect("frame", frame);
+
+	BMessenger messenger(NULL, fWindow);
+	messenger.SendMessage(&setFrame);
 }
